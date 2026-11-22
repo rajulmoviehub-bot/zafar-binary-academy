@@ -182,8 +182,6 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       const user=data.user;
       const isAdmin=user.email?.toLowerCase()==="rajulmoviehub@gmail.com";
       if (isAdmin) {
-        const {error: roleError}=await client.from("profiles").upsert({id:user.id,full_name:"Paul M K",whatsapp:"0714480604",country:"Kenya",role:"admin"},{onConflict:"id"});
-        if(roleError) throw roleError;
         show("loginMessage","Administrator signed in. Loading management dashboard...");
         await loadAdminDashboard();
       } else {
