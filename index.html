@@ -71,6 +71,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 
   document.getElementById("registerForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    const form = event.currentTarget;
     const name = document.getElementById("regName").value.trim();
     const age = Number(document.getElementById("regAge").value);
     const whatsapp = document.getElementById("regWhatsapp").value.trim();
@@ -80,7 +81,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     const confirm = document.getElementById("regConfirm").value;
     if (password !== confirm) return show("registerMessage", "Passwords do not match.");
     if (age < 18) return show("registerMessage", "You must be at least 18 years old to register.");
-    const submit = event.currentTarget.querySelector('button[type="submit"]');
+    const submit = form.querySelector('button[type="submit"]');
     submit.disabled = true; submit.textContent = "CREATING ACCOUNT...";
     show("registerMessage", "Please wait...");
     try {
@@ -99,7 +100,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       } else {
         show("registerMessage", "Account created. Check your email and confirm your address. After confirmation, log in to complete your student application.");
       }
-      event.currentTarget.reset();
+      form.reset();
     } catch (err) {
       show("registerMessage", err.message || "Registration failed. Please try again.");
     } finally {
