@@ -143,9 +143,9 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
   document.getElementById("verifyCertificateForm")?.addEventListener("submit", async event => {
     event.preventDefault(); show("verifyCertificateMessage","Checking certificate...");
     const number=document.getElementById("verifyCertificateNumber").value.trim();
-    const {data,error}=await client.from("certificates").select("certificate_number,student_name,course,issued_at,status").eq("certificate_number",number).eq("status","valid").maybeSingle();
+    const {data,error}=await client.rpc("verify_academy_certificate",{p_certificate_number:number});
     if(error) { show("verifyCertificateMessage","Verification service is unavailable. Please try again later."); return; }
-    show("verifyCertificateMessage",data ? "VALID — "+data.student_name+" | "+data.course+" | Issued "+data.issued_at : "No valid certificate was found with that number.");
+    show("verifyCertificateMessage",data && data.length ? "VALID — "+data[0].student_name+" | "+data[0].course+" | Issued "+data[0].issued_at : "No valid certificate was found with that number.");
   });
   function printCertificate(c) {
     const safe=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
