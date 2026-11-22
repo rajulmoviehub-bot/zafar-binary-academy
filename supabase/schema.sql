@@ -19,6 +19,8 @@ create table if not exists public.student_applications (
   country text,
   course text not null default 'Full Binary Trading Course',
   payment_status text not null default 'pending' check (payment_status in ('pending','paid','rejected','refunded')),
+  payment_reference text,
+  payment_verified_at timestamptz,
   application_status text not null default 'submitted' check (application_status in ('submitted','approved','declined')),
   created_at timestamptz not null default now()
 );
@@ -115,3 +117,29 @@ for each row execute procedure public.handle_new_academy_user();
 
 -- Important: admin privileges are determined by the verified auth email claim,
 -- not by a role value supplied from the browser. Enable email confirmation in Auth.
+
+
+-- Private class delivery details: only paid + approved students and admin can read.
+create table if not exists public.academy_class_settings (
+  id boolean primary key default true check (id = true),
+  class_schedule text not null default 'Class timetable will be announced by the academy.',
+  zoom_meeting_url text not null default '',
+  whatsapp_group_url text not null default '',
+  updated_at timestamptz not null default now()
+);
+insert into public.academy_class_settings (id) values (true) on conflict (id) do nothing;
+alter table public.academy_class_settings enable row level security;
+drop policy if exists "admin manage class settings" on public.academy_class_settings;
+create policy "admin manage class settings" on public.academy_class_settings
+for all to authenticated
+using ((auth.jwt() ->> 'email') = 'rajulmoviehub@gmail.com')
+with check ((auth.jwt() ->> 'email') = 'rajulmoviehub@gmail.com');
+drop policy if exists "enrolled students read class settings" on public.academy_class_settings;
+create policy "enrolled students read class settings" on public.academy_class_settings
+for select to authenticated
+using (exists (
+  select 1 from public.student_applications a
+  where a.user_id = auth.uid()
+    and a.application_status = 'approved'
+    and a.payment_status = 'paid'
+));
