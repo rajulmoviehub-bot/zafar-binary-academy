@@ -55,6 +55,8 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 
 <section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><p class="note">Sign in using the email address and password you registered with.</p><form id="loginForm"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Your registered email" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button><p id="loginMessage" class="note" role="status"></p></form><button class="btn outline" id="logoutBtn" type="button" style="display:none">LOG OUT</button><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
 
+<section id="studentDashboard" style="display:none"><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><p class="note">Zoom schedule and private WhatsApp group details are shared by academy administration after payment verification. No payment is collected on this website yet.</p></div></section>
+<section id="certificateVerify"><div class="center"><h2>Certificate Verification</h2><p>Check an academy certificate number.</p></div><div class="card" style="max-width:560px;margin:auto"><form id="verifyCertificateForm"><label>Certificate number</label><input id="verifyCertificateNumber" required placeholder="ZBA-2026-XXXXXXXX"><button class="btn" type="submit">VERIFY CERTIFICATE</button></form><p id="verifyCertificateMessage" class="note" role="status"></p></div></section>
 <section id="admin"><div class="center"><h2>Academy Admin Panel</h2><p>Management dashboard preview</p><span class="pill">ADMIN ACCESS — BACKEND SETUP REQUIRED</span></div>
 <div class="grid"><div class="grid"><div class="card"><div class="stat" id="adminStudentCount">—</div><p>Student applications</p></div><div class="card"><div class="stat" id="adminPendingCount">—</div><p>Pending applications</p></div><div class="card"><div class="stat" id="adminPaidCount">—</div><p>Payment records marked paid</p></div><div class="card"><div class="stat" id="adminCertificateCount">—</div><p>Certificates issued</p></div></div>
 <div id="adminWorkspace" class="card" style="margin-top:20px;display:none"><h3>Student applications</h3><p class="note">Review each application. Only mark a payment paid after checking your actual payment statement.</p><div style="overflow-x:auto"><table id="adminApplications" style="width:100%;border-collapse:collapse;min-width:760px"><thead><tr><th align="left">Student</th><th align="left">Contact / Country</th><th align="left">Application</th><th align="left">Payment</th><th align="left">Actions</th></tr></thead><tbody></tbody></table></div>
@@ -111,6 +113,13 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     }
   });
 
+  document.getElementById("verifyCertificateForm")?.addEventListener("submit", async event => {
+    event.preventDefault(); show("verifyCertificateMessage","Checking certificate...");
+    const number=document.getElementById("verifyCertificateNumber").value.trim();
+    const {data,error}=await client.from("certificates").select("certificate_number,student_name,course,issued_at,status").eq("certificate_number",number).eq("status","valid").maybeSingle();
+    if(error) { show("verifyCertificateMessage","Verification service is unavailable. Please try again later."); return; }
+    show("verifyCertificateMessage",data ? "VALID — "+data.student_name+" | "+data.course+" | Issued "+data.issued_at : "No valid certificate was found with that number.");
+  });
   async function loadAdminDashboard() {
     const { data: apps, error } = await client.from("student_applications").select("*").order("created_at", {ascending:false});
     if (error) throw error;
@@ -194,9 +203,18 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
           if(appError) throw appError;
         }
         const {data:application}=await client.from("student_applications").select("application_status,payment_status,course").eq("user_id",user.id).maybeSingle();
-        show("loginMessage",application
-          ? "Welcome. Application: "+application.application_status+". Payment: "+application.payment_status+". Course: "+application.course+"."
-          : "Signed in. Your account is active; contact the academy if your application is missing.");
+        if(application) {
+          document.getElementById("studentDashboard").style.display="block";
+          document.getElementById("studentApplicationStatus").textContent=application.application_status;
+          document.getElementById("studentPaymentStatus").textContent=application.payment_status;
+          document.getElementById("studentCourseName").textContent=application.course;
+          document.getElementById("studentNextStep").textContent=application.payment_status==="paid"
+            ? (application.application_status==="approved" ? "Contact the academy for your class timetable and WhatsApp group invitation." : "Your payment is recorded. Await application approval.")
+            : "Payment checkout is not yet enabled. Contact academy support for official payment instructions.";
+          show("loginMessage","Welcome. Your student dashboard is ready below.");
+        } else {
+          show("loginMessage","Signed in. Your account is active, but no student application was found. Contact academy support.");
+        }
       }
       document.getElementById("logoutBtn").style.display = "inline-block";
     } catch (err) {
@@ -211,6 +229,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     document.getElementById("logoutBtn").style.display = "none";
     document.getElementById("adminWorkspace").style.display = "none";
     document.getElementById("adminLocked").style.display = "block";
+    document.getElementById("studentDashboard").style.display = "none";
   });
 })();
 </script>
