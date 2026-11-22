@@ -197,10 +197,14 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
         const meta=user.user_metadata||{};
         const age=Number(meta.age||0);
         if(meta.full_name && age>=18 && meta.whatsapp) {
-          const {error:appError}=await client.from("student_applications").upsert({
-            user_id:user.id,passport_name:meta.full_name,age,whatsapp:meta.whatsapp,country:meta.country||""
-          },{onConflict:"user_id"});
-          if(appError) throw appError;
+          const {data:existingApp,error:lookupError}=await client.from("student_applications").select("id").eq("user_id",user.id).maybeSingle();
+          if(lookupError) throw lookupError;
+          if(!existingApp) {
+            const {error:appError}=await client.from("student_applications").insert({
+              user_id:user.id,passport_name:meta.full_name,age,whatsapp:meta.whatsapp,country:meta.country||""
+            });
+            if(appError) throw appError;
+          }
         }
         const {data:application}=await client.from("student_applications").select("application_status,payment_status,course").eq("user_id",user.id).maybeSingle();
         if(application) {
