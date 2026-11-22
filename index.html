@@ -31,7 +31,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <section id="courses"><div class="center"><h2>Our Courses</h2><p>Structured online learning for beginners and developing traders.</p></div><div class="grid">
 <div class="card"><img class="course-img" src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=700&q=80" alt="Financial market charts"><h3>01. Binary Foundations</h3><p>Understand binary trading, terminology, trade types and platform basics.</p></div>
 <div class="card"><img class="course-img" src="https://images.unsplash.com/photo-1642790106117-e829e14a795f?auto=format&fit=crop&w=700&q=80" alt="Trading price chart"><h3>02. Rise / Fall Trading</h3><p>Learn price direction, chart reading and Rise and Fall contract basics.</p></div>
-<div class="card"><img class="course-img" src="https://images.unsplash.com/photo-146(0)0000000000?auto=format&fit=crop&w=700&q=80" alt="Digital trading workspace" onerror="this.style.display='none'"><h3>03. Even / Odd & Digits</h3><p>Study digit contracts, synthetic-market concepts and their risks.</p></div>
+<div class="card"><img class="course-img" src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=700&q=80" alt="Digital trading workspace" onerror="this.style.display='none'"><h3>03. Even / Odd & Digits</h3><p>Study digit contracts, synthetic-market concepts and their risks.</p></div>
 <div class="card"><img class="course-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=80" alt="Data analytics charts"><h3>04. Charts & Candlesticks</h3><p>Learn candle structure, trends, support, resistance and chart analysis.</p></div>
 <div class="card"><h3>05. Risk Management</h3><p>Understand position sizing, loss limits, discipline and responsible practice.</p></div>
 <div class="card"><h3>06. Trading Psychology</h3><p>Develop patience, emotional control and a structured learning routine.</p></div>
@@ -56,8 +56,11 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><p class="note">Sign in using the email address and password you registered with.</p><form id="loginForm"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Your registered email" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button><p id="loginMessage" class="note" role="status"></p></form><button class="btn outline" id="logoutBtn" type="button" style="display:none">LOG OUT</button><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
 
 <section id="admin"><div class="center"><h2>Academy Admin Panel</h2><p>Management dashboard preview</p><span class="pill">ADMIN ACCESS — BACKEND SETUP REQUIRED</span></div>
-<div class="grid"><div class="card"><div class="stat">Students</div><p>Review and manage student applications after secure database setup.</p></div><div class="card"><div class="stat">Payments</div><p>Verify course payments after payment-provider integration.</p></div><div class="card"><div class="stat">Certificates</div><p>Issue, search and verify academy certificates when the certificate system is connected.</p></div><div class="card"><div class="stat">Courses</div><p>Manage course content, Zoom timetable and student announcements.</p></div></div>
-<div class="card" style="margin-top:20px"><h3>Administrator sign-in</h3><p>Admin account reserved for <strong>rajulmoviehub@gmail.com</strong> and phone <strong>0714480604</strong>.</p><p class="warning">This panel is not secured or connected to a backend yet. It does not display real student records. A secure server-side admin role and authentication must be installed before use. Do not rely on a front-end-only password check.</p></div></section>
+<div class="grid"><div class="grid"><div class="card"><div class="stat" id="adminStudentCount">—</div><p>Student applications</p></div><div class="card"><div class="stat" id="adminPendingCount">—</div><p>Pending applications</p></div><div class="card"><div class="stat" id="adminPaidCount">—</div><p>Payment records marked paid</p></div><div class="card"><div class="stat" id="adminCertificateCount">—</div><p>Certificates issued</p></div></div>
+<div id="adminWorkspace" class="card" style="margin-top:20px;display:none"><h3>Student applications</h3><p class="note">Review each application. Only mark a payment paid after checking your actual payment statement.</p><div style="overflow-x:auto"><table id="adminApplications" style="width:100%;border-collapse:collapse;min-width:760px"><thead><tr><th align="left">Student</th><th align="left">Contact / Country</th><th align="left">Application</th><th align="left">Payment</th><th align="left">Actions</th></tr></thead><tbody></tbody></table></div>
+<hr style="border-color:#40331e;margin:25px 0"><h3>Issue certificate</h3><form id="certificateForm"><label>Student user ID</label><input id="certStudentId" required placeholder="Copy student user ID from application record"><label>Student full name</label><input id="certStudentName" required placeholder="Full name"><label>Course</label><input id="certCourse" value="Full Binary Trading Course" required><button class="btn" type="submit">ISSUE CERTIFICATE</button><p id="certificateMessage" class="note" role="status"></p></form>
+<h3>Issued certificates</h3><div id="adminCertificates" class="note">Loading...</div></div>
+<div id="adminLocked" class="card" style="margin-top:20px"><h3>Administrator sign-in</h3><p>Sign in using the administrator account <strong>rajulmoviehub@gmail.com</strong>.</p><p class="warning">The dashboard is available only to the authenticated administrator. Payment verification here is manual; no payment gateway is connected yet.</p></div></section>
 
 <footer><div class="brand">ZAFAR BINARY ACADEMY</div><p>Founder & Director: Paul M K</p><p>Education • Practice • Risk Awareness</p><p class="note">Binary trading involves substantial risk. Education does not guarantee profits. Academy-issued certificate is not an externally accredited qualification.</p><p>© 2026 ZAFAR BINARY ACADEMY</p></footer>
 
@@ -87,7 +90,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     try {
       const { data, error } = await client.auth.signUp({
         email, password,
-        options: { data: { full_name: name, whatsapp, country }, emailRedirectTo: window.location.origin }
+        options: { data: { full_name: name, whatsapp, country, age }, emailRedirectTo: window.location.origin }
       });
       if (error) throw error;
       if (data.session && data.user) {
@@ -108,6 +111,64 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     }
   });
 
+  async function loadAdminDashboard() {
+    const { data: apps, error } = await client.from("student_applications").select("*").order("created_at", {ascending:false});
+    if (error) throw error;
+    const { data: certs, error: certError } = await client.from("certificates").select("*").order("created_at", {ascending:false});
+    if (certError) throw certError;
+    document.getElementById("adminWorkspace").style.display = "block";
+    document.getElementById("adminLocked").style.display = "none";
+    document.getElementById("adminStudentCount").textContent = apps.length;
+    document.getElementById("adminPendingCount").textContent = apps.filter(a=>a.application_status==="submitted").length;
+    document.getElementById("adminPaidCount").textContent = apps.filter(a=>a.payment_status==="paid").length;
+    document.getElementById("adminCertificateCount").textContent = certs.length;
+    const tbody = document.querySelector("#adminApplications tbody");
+    tbody.replaceChildren();
+    apps.forEach(a => {
+      const tr = document.createElement("tr");
+      const cells = [
+        a.passport_name + " | " + a.age + " yrs | ID: " + a.user_id,
+        (a.whatsapp || "") + " | " + (a.country || ""),
+        a.application_status,
+        a.payment_status
+      ];
+      cells.forEach(value => { const td=document.createElement("td"); td.textContent=value; td.style.padding="10px 8px"; td.style.borderTop="1px solid #40331e"; tr.appendChild(td); });
+      const action=document.createElement("td"); action.style.padding="10px 8px"; action.style.borderTop="1px solid #40331e";
+      const approve=document.createElement("button"); approve.className="btn"; approve.textContent="Approve"; approve.type="button"; approve.onclick=()=>updateApplication(a.id,{application_status:"approved"});
+      const decline=document.createElement("button"); decline.className="btn outline"; decline.textContent="Decline"; decline.type="button"; decline.onclick=()=>updateApplication(a.id,{application_status:"declined"});
+      const paid=document.createElement("button"); paid.className="btn"; paid.textContent="Mark paid"; paid.type="button"; paid.onclick=()=>updateApplication(a.id,{payment_status:"paid"});
+      const pending=document.createElement("button"); pending.className="btn outline"; pending.textContent="Set unpaid"; pending.type="button"; pending.onclick=()=>updateApplication(a.id,{payment_status:"pending"});
+      [approve,decline,paid,pending].forEach(b=>{b.style.padding="7px 9px";b.style.fontSize="12px";action.appendChild(b);});
+      tr.appendChild(action); tbody.appendChild(tr);
+    });
+    const certBox=document.getElementById("adminCertificates"); certBox.replaceChildren();
+    if (!certs.length) certBox.textContent="No certificates issued yet.";
+    certs.forEach(c=>{const p=document.createElement("p");p.textContent=c.certificate_number+" — "+c.student_name+" — "+c.course+" — "+c.status;certBox.appendChild(p);});
+  }
+  async function updateApplication(id, changes) {
+    const { error } = await client.from("student_applications").update(changes).eq("id",id);
+    if (error) { alert(error.message); return; }
+    await loadAdminDashboard();
+  }
+  document.getElementById("certificateForm")?.addEventListener("submit", async event => {
+    event.preventDefault();
+    const form=event.currentTarget, button=form.querySelector('button[type="submit"]');
+    button.disabled=true; button.textContent="ISSUING...";
+    try {
+      const number="ZBA-"+new Date().getFullYear()+"-"+crypto.randomUUID().slice(0,8).toUpperCase();
+      const {error}=await client.from("certificates").insert({
+        certificate_number:number,
+        student_id:document.getElementById("certStudentId").value.trim(),
+        student_name:document.getElementById("certStudentName").value.trim(),
+        course:document.getElementById("certCourse").value.trim()
+      });
+      if(error) throw error;
+      show("certificateMessage","Certificate record created: "+number);
+      form.reset(); document.getElementById("certCourse").value="Full Binary Trading Course";
+      await loadAdminDashboard();
+    } catch(err) { show("certificateMessage",err.message||"Could not issue certificate."); }
+    finally {button.disabled=false;button.textContent="ISSUE CERTIFICATE";}
+  });
   document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const submit = event.currentTarget.querySelector('button[type="submit"]');
@@ -118,12 +179,26 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
         password: document.getElementById("loginPassword").value
       });
       if (error) throw error;
-      const { data: profile, error: profileError } = await client.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
-      if (profileError) throw profileError;
-      if (data.user.email?.toLowerCase() === "rajulmoviehub@gmail.com" && profile?.role === "admin") {
-        show("loginMessage", "Admin signed in successfully. Admin dashboard connection is the next setup step.");
+      const user=data.user;
+      const isAdmin=user.email?.toLowerCase()==="rajulmoviehub@gmail.com";
+      if (isAdmin) {
+        const {error: roleError}=await client.from("profiles").upsert({id:user.id,full_name:"Paul M K",whatsapp:"0714480604",country:"Kenya",role:"admin"},{onConflict:"id"});
+        if(roleError) throw roleError;
+        show("loginMessage","Administrator signed in. Loading management dashboard...");
+        await loadAdminDashboard();
       } else {
-        show("loginMessage", "Signed in successfully. Your student dashboard is being prepared.");
+        const meta=user.user_metadata||{};
+        const age=Number(meta.age||0);
+        if(meta.full_name && age>=18 && meta.whatsapp) {
+          const {error:appError}=await client.from("student_applications").upsert({
+            user_id:user.id,passport_name:meta.full_name,age,whatsapp:meta.whatsapp,country:meta.country||""
+          },{onConflict:"user_id"});
+          if(appError) throw appError;
+        }
+        const {data:application}=await client.from("student_applications").select("application_status,payment_status,course").eq("user_id",user.id).maybeSingle();
+        show("loginMessage",application
+          ? "Welcome. Application: "+application.application_status+". Payment: "+application.payment_status+". Course: "+application.course+"."
+          : "Signed in. Your account is active; contact the academy if your application is missing.");
       }
       document.getElementById("logoutBtn").style.display = "inline-block";
     } catch (err) {
@@ -136,6 +211,8 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     const { error } = await client.auth.signOut();
     show("loginMessage", error ? error.message : "You are signed out.");
     document.getElementById("logoutBtn").style.display = "none";
+    document.getElementById("adminWorkspace").style.display = "none";
+    document.getElementById("adminLocked").style.display = "block";
   });
 })();
 </script>
