@@ -22,7 +22,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 </head>
 <body>
 <header><div class="brand">ZAFAR BINARY ACADEMY</div><nav>
-<a href="#courses">Courses</a><a href="#fees">Fees</a><a href="#register">Register</a><a href="#login">Login</a><a href="#admin">Admin Panel</a>
+<a href="#courses">Courses</a><a href="#fees">Fees</a><a href="#register">Register</a><a href="#login">Login</a><a href="#studentDashboard">Student Area</a><a href="#admin">Admin Panel</a><a href="#terms">Terms</a>
 </nav></header>
 <div class="hero"><p style="color:#d5ad55;letter-spacing:3px">LEARN • PRACTISE • GROW</p><h1>Master Binary Trading<br>With Knowledge</h1>
 <p>Build your understanding through online lessons, practical education, risk management and a free virtual-money practice simulator.</p>
@@ -64,6 +64,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <h3>Issued certificates</h3><div id="adminCertificates" class="note">Loading...</div></div>
 <div id="adminLocked" class="card" style="margin-top:20px"><h3>Administrator sign-in</h3><p>Sign in using the administrator account <strong>rajulmoviehub@gmail.com</strong>.</p><p class="warning">The dashboard is available only to the authenticated administrator. Payment verification here is manual; no payment gateway is connected yet.</p></div></section>
 
+<section id="terms"><div class="center"><h2>Terms, Privacy & Risk Disclosure</h2></div><div class="card"><h3>Education service</h3><p>ZAFAR BINARY ACADEMY provides online educational content and practice activities. It does not provide personal investment advice, manage trading accounts, or guarantee trading results.</p><h3>Eligibility and accounts</h3><p>Registration is limited to people aged 18 or older. Students must provide accurate registration details, protect their passwords, and use only their own account. The academy may review applications and suspend accounts for misuse.</p><h3>Fees and enrolment</h3><p>Course prices are shown in USD. A place is not confirmed until the academy verifies payment and approves the application. Payment checkout is not currently active on this website; follow only payment instructions confirmed by the academy.</p><h3>Privacy</h3><p>Registration details are used to administer student accounts, applications, course communication and certificates. Do not submit passport numbers or upload identity documents through this website. Contact <a href="mailto:rajulmoviehub@gmail.com">rajulmoviehub@gmail.com</a> for privacy requests.</p><h3>Trading risk</h3><p>Binary options and other speculative trading can result in the loss of money. Practice tools are educational only. Past examples and simulated results do not predict future performance.</p><h3>Certificates</h3><p>Certificates are issued by this academy after course completion and assessment. They are not government-issued or externally accredited qualifications.</p></div></section>
 <footer><div class="brand">ZAFAR BINARY ACADEMY</div><p>Founder & Director: Paul M K</p><p>Education • Practice • Risk Awareness</p><p class="note">Binary trading involves substantial risk. Education does not guarantee profits. Academy-issued certificate is not an externally accredited qualification.</p><p>© 2026 ZAFAR BINARY ACADEMY</p></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -120,6 +121,15 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     if(error) { show("verifyCertificateMessage","Verification service is unavailable. Please try again later."); return; }
     show("verifyCertificateMessage",data ? "VALID — "+data.student_name+" | "+data.course+" | Issued "+data.issued_at : "No valid certificate was found with that number.");
   });
+  function printCertificate(c) {
+    const safe=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+    const w=window.open("","_blank","width=1000,height=750");
+    if(!w){alert("Allow pop-ups to print the certificate.");return;}
+    w.document.write(`<!doctype html><html><head><title>${safe(c.certificate_number)}</title><style>
+      @page{size:A4 landscape;margin:12mm}*{box-sizing:border-box}body{margin:0;background:#fff;font-family:Georgia,serif;color:#16120a}.sheet{height:180mm;border:9px double #b58a36;padding:18mm;text-align:center;position:relative}.name{font-size:34px;color:#9b7429;margin:15px 0}.academy{font:bold 30px Arial;letter-spacing:4px;color:#9b7429}.sub{letter-spacing:3px;font:14px Arial;margin:12px}.line{width:65%;margin:8px auto;border-bottom:1px solid #b58a36}.seal{display:inline-block;border:3px double #9b7429;border-radius:50%;padding:15px;margin-top:10px;font:bold 13px Arial;color:#9b7429}.signature{font:bold italic 26px cursive;color:#2457a6;margin-top:10px}.small{font:12px Arial;color:#554b39}.number{font:13px Arial;position:absolute;bottom:12mm;left:0;right:0}
+    </style></head><body><main class="sheet"><div class="academy">ZAFAR BINARY ACADEMY</div><div class="sub">CERTIFICATE OF COMPLETION</div><p>This is proudly presented to</p><div class="name">${safe(c.student_name)}</div><div class="line"></div><p>for successfully completing the course</p><h2>${safe(c.course)}</h2><p>and meeting the academy's course completion requirements.</p><div class="seal">ZAFAR BINARY ACADEMY<br>PMK • EST. 2026<br>FOUNDER & DIRECTOR</div><div class="signature">PMK</div><div class="small">Paul M K · Founder &amp; Director</div><div class="number">Certificate No: ${safe(c.certificate_number)} · Issued: ${safe(c.issued_at)}<br>This is an academy-issued certificate, not an externally accredited qualification.</div></main><script>window.onload=()=>window.print();<\/script></body></html>`);
+    w.document.close();
+  }
   async function loadAdminDashboard() {
     const { data: apps, error } = await client.from("student_applications").select("*").order("created_at", {ascending:false});
     if (error) throw error;
@@ -152,7 +162,12 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     });
     const certBox=document.getElementById("adminCertificates"); certBox.replaceChildren();
     if (!certs.length) certBox.textContent="No certificates issued yet.";
-    certs.forEach(c=>{const p=document.createElement("p");p.textContent=c.certificate_number+" — "+c.student_name+" — "+c.course+" — "+c.status;certBox.appendChild(p);});
+    certs.forEach(c=>{
+      const row=document.createElement("div"); row.style.cssText="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-top:1px solid #40331e;padding:10px 0";
+      const p=document.createElement("span");p.textContent=c.certificate_number+" — "+c.student_name+" — "+c.course+" — "+c.status;
+      const print=document.createElement("button");print.type="button";print.className="btn";print.textContent="Print / Save PDF";print.onclick=()=>printCertificate(c);
+      row.append(p,print);certBox.appendChild(row);
+    });
   }
   async function updateApplication(id, changes) {
     const { error } = await client.from("student_applications").update(changes).eq("id",id);
@@ -164,15 +179,19 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     const form=event.currentTarget, button=form.querySelector('button[type="submit"]');
     button.disabled=true; button.textContent="ISSUING...";
     try {
+      const studentId=document.getElementById("certStudentId").value.trim();
+      const {data:application,error:appLookupError}=await client.from("student_applications").select("application_status,payment_status").eq("user_id",studentId).maybeSingle();
+      if(appLookupError) throw appLookupError;
+      if(!application || application.application_status!=="approved" || application.payment_status!=="paid") throw new Error("Certificate eligibility requires an approved application and verified paid status.");
       const number="ZBA-"+new Date().getFullYear()+"-"+crypto.randomUUID().slice(0,8).toUpperCase();
       const {error}=await client.from("certificates").insert({
         certificate_number:number,
-        student_id:document.getElementById("certStudentId").value.trim(),
+        student_id:studentId,
         student_name:document.getElementById("certStudentName").value.trim(),
         course:document.getElementById("certCourse").value.trim()
       });
       if(error) throw error;
-      show("certificateMessage","Certificate record created: "+number);
+      show("certificateMessage","Certificate record created: "+number+". Use its Print / Save PDF button below.");
       form.reset(); document.getElementById("certCourse").value="Full Binary Trading Course";
       await loadAdminDashboard();
     } catch(err) { show("certificateMessage",err.message||"Could not issue certificate."); }
