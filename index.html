@@ -76,7 +76,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <div id="adminWorkspace" class="card" style="margin-top:20px;display:none"><h3>Student applications</h3><p class="note">Review each application. Only mark a payment paid after checking your actual payment statement.</p><div style="overflow-x:auto"><table id="adminApplications" style="width:100%;border-collapse:collapse;min-width:760px"><thead><tr><th align="left">Student</th><th align="left">Contact / Country</th><th align="left">Application</th><th align="left">Payment</th><th align="left">Actions</th></tr></thead><tbody></tbody></table></div>
 <hr style="border-color:#40331e;margin:25px 0"><h3>Class timetable & private access</h3><p class="note">Only approved students with verified payment can see these details.</p><form id="classSettingsForm"><label>Class timetable / time zone</label><input id="classScheduleInput" placeholder="e.g. Saturday and Sunday, 7:00–8:30 PM EAT" required><label>Zoom meeting URL</label><input id="classZoomInput" type="url" placeholder="https://zoom.us/j/..."><label>Private WhatsApp group invite URL</label><input id="classWhatsAppInput" type="url" placeholder="https://chat.whatsapp.com/..."><button class="btn" type="submit">SAVE CLASS DETAILS</button><p id="classSettingsMessage" class="note" role="status"></p></form><hr style="border-color:#40331e;margin:25px 0"><h3>Issue certificate</h3><form id="certificateForm"><label>Student user ID</label><input id="certStudentId" required placeholder="Copy student user ID from application record"><label>Student full name</label><input id="certStudentName" required placeholder="Full name"><label>Course</label><input id="certCourse" value="Full Binary Trading Course" required><label><input id="certCompleted" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student completed the course.</label><br><label><input id="certPassed" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student passed the final assessment.</label><br><button class="btn" type="submit">ISSUE CERTIFICATE</button><p id="certificateMessage" class="note" role="status"></p></form>
 <h3>Issued certificates</h3><div id="adminCertificates" class="note">Loading...</div></div>
-<div id="adminLocked" class="card" style="margin-top:20px"><h3>Administrator sign-in</h3><p>Sign in using the administrator account <strong>rajulmoviehub@gmail.com</strong>.</p><p class="warning">The dashboard is available only to the authenticated administrator. Payment verification here is manual; no payment gateway is connected yet.</p></div></section>
+<div id="adminLocked" class="card" style="margin-top:20px"><h3>Administrator sign-in</h3><p>Sign in using the administrator account <strong>rajulmoviehub@gmail.com</strong>.</p><p class="warning">The dashboard is available only to the authenticated administrator. M-Pesa checkout still requires a successful live test. Verify every receipt against your actual Safaricom statement before marking a student paid.</p></div></section>
 
 <section id="terms"><div class="center"><h2>Terms, Privacy & Risk Disclosure</h2></div><div class="card"><h3>Education service</h3><p>ZAFAR BINARY ACADEMY provides online educational content and practice activities. It does not provide personal investment advice, manage trading accounts, or guarantee trading results.</p><h3>Eligibility and accounts</h3><p>Registration is limited to people aged 18 or older. Students must provide accurate registration details, protect their passwords, and use only their own account. The academy may review applications and suspend accounts for misuse.</p><h3>Fees and enrolment</h3><p>Course prices are shown in USD. Students register and log in first, then use the Fees section to request M-Pesa payment. A place is not confirmed until the academy verifies payment and approves the application.</p><h3>Privacy</h3><p>Registration details are used to administer student accounts, applications, course communication and certificates. Do not submit passport numbers or upload identity documents through this website. Contact <a href="mailto:rajulmoviehub@gmail.com">rajulmoviehub@gmail.com</a> for privacy requests.</p><h3>Trading risk</h3><p>Binary options and other speculative trading can result in the loss of money. Practice tools are educational only. Past examples and simulated results do not predict future performance.</p><h3>Certificates</h3><p>Certificates are issued by this academy after course completion and assessment. They are not government-issued or externally accredited qualifications.</p></div></section>
 <footer><div class="brand">ZAFAR BINARY ACADEMY</div><p>Founder & Director: Paul M K</p><p>Education • Practice • Risk Awareness</p><p class="note">Binary trading involves substantial risk. Education does not guarantee profits. Academy-issued certificate is not an externally accredited qualification.</p><p>© 2026 ZAFAR BINARY ACADEMY</p></footer>
@@ -182,21 +182,28 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     }
     if(classSettings) {
       const agreedSchedule="Monday, Wednesday, Friday & Sunday | 8:00 PM–10:00 PM EAT (Nairobi)";
-      document.getElementById("classScheduleInput").value=classSettings.class_schedule||agreedSchedule;
-      document.getElementById("classZoomInput").value=classSettings.zoom_meeting_url||"";
+      const oldDefault="Class timetable will be announced by the academy.";
+      const scheduleNeedsUpdate=!classSettings.class_schedule || classSettings.class_schedule.trim()===oldDefault;
+      const savedSchedule=scheduleNeedsUpdate?agreedSchedule:classSettings.class_schedule;
       const academyWhatsAppInvite="https://chat.whatsapp.com/I5o5C2sjgo9HNAvSwdvNcD?s=cl&p=a&iam=2";
-      document.getElementById("classWhatsAppInput").value=classSettings.whatsapp_group_url||academyWhatsAppInvite;
-      if(!classSettings.class_schedule || !classSettings.whatsapp_group_url) {
+      const savedWhatsApp=classSettings.whatsapp_group_url||academyWhatsAppInvite;
+      document.getElementById("classScheduleInput").value=savedSchedule;
+      document.getElementById("classZoomInput").value=classSettings.zoom_meeting_url||"";
+      document.getElementById("classWhatsAppInput").value=savedWhatsApp;
+      if(scheduleNeedsUpdate || !classSettings.whatsapp_group_url) {
         const {error:settingsSaveError}=await client.from("academy_class_settings").upsert({
           id:true,
-          class_schedule:classSettings.class_schedule||agreedSchedule,
+          class_schedule:savedSchedule,
           zoom_meeting_url:classSettings.zoom_meeting_url||"",
-          whatsapp_group_url:classSettings.whatsapp_group_url||academyWhatsAppInvite,
+          whatsapp_group_url:savedWhatsApp,
           updated_at:new Date().toISOString()
         },{onConflict:"id"});
         if(settingsSaveError) {
           const message=document.getElementById("classSettingsMessage");
-          if(message) message.textContent="The agreed timetable and WhatsApp link are prefilled. Tap SAVE CLASS DETAILS to save them.";
+          if(message) message.textContent="The agreed timetable and WhatsApp link are prefilled. Tap SAVE CLASS DETAILS to publish them.";
+        } else {
+          const message=document.getElementById("classSettingsMessage");
+          if(message) message.textContent="Agreed class timetable and WhatsApp invite saved.";
         }
       }
     }
