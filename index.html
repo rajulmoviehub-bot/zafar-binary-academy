@@ -49,7 +49,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <section id="register"><div class="center"><h2>Student Registration</h2><p>Create your secure student account and submit your course application.</p></div><div class="card">
 <div class="warning">Use your real details only on this secure academy website. You must be 18 or older. Email confirmation may be required before you can log in.</div>
 <form id="registerForm">
-<div class="form-grid"><div><label>Full names as on passport</label><input id="regName" required autocomplete="name" placeholder="Full legal names"></div><div><label>Passport number</label><input id="regPassport" required autocomplete="off" placeholder="Passport number"></div><div><label>Age (18+)</label><input id="regAge" type="number" min="18" required placeholder="Age"></div><div><label>WhatsApp number with country code</label><input id="regWhatsapp" required placeholder="+254..."></div><div><label>Email address</label><input id="regEmail" type="email" required autocomplete="email" placeholder="you@example.com"></div><div><label>Country</label><input id="regCountry" required autocomplete="country-name" placeholder="Your country"></div><div><label>Create password</label><input id="regPassword" type="password" minlength="8" required autocomplete="new-password" placeholder="At least 8 characters"></div><div><label>Confirm password</label><input id="regConfirm" type="password" minlength="8" required autocomplete="new-password" placeholder="Repeat password"></div></div>
+<div class="form-grid"><div><label>Full names as on passport</label><input id="regName" required autocomplete="name" placeholder="Full legal names"></div><div><label>Age (18+)</label><input id="regAge" type="number" min="18" required placeholder="Age"></div><div><label>WhatsApp number with country code</label><input id="regWhatsapp" required placeholder="+254..."></div><div><label>Email address</label><input id="regEmail" type="email" required autocomplete="email" placeholder="you@example.com"></div><div><label>Country</label><input id="regCountry" required autocomplete="country-name" placeholder="Your country"></div><div><label>Create password</label><input id="regPassword" type="password" minlength="8" required autocomplete="new-password" placeholder="At least 8 characters"></div><div><label>Confirm password</label><input id="regConfirm" type="password" minlength="8" required autocomplete="new-password" placeholder="Repeat password"></div></div>
 <label><input id="regTerms" type="checkbox" required style="width:auto;margin-right:8px">I agree to the academy terms and privacy notice.</label><br><button class="btn" type="submit">CREATE ACCOUNT & APPLY</button><p id="registerMessage" class="note" role="status"></p></form>
 <p class="note">Support: <a href="mailto:rajulmoviehub@gmail.com">rajulmoviehub@gmail.com</a>. Never send your password by email or WhatsApp.</p></div></section>
 
@@ -72,7 +72,6 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
   document.getElementById("registerForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const name = document.getElementById("regName").value.trim();
-    const passport = document.getElementById("regPassport").value.trim();
     const age = Number(document.getElementById("regAge").value);
     const whatsapp = document.getElementById("regWhatsapp").value.trim();
     const email = document.getElementById("regEmail").value.trim();
@@ -92,13 +91,13 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       if (error) throw error;
       if (data.session && data.user) {
         const { error: appError } = await client.from("student_applications").insert({
-          user_id: data.user.id, passport_name: name, passport_number: passport,
+          user_id: data.user.id, passport_name: name,
           age, whatsapp, country
         });
         if (appError) throw appError;
         show("registerMessage", "Account created and application submitted. You can now log in.");
       } else {
-        show("registerMessage", "Account created. Check your email and confirm your address. After confirmation, log in to complete your student application. Your passport details have not yet been submitted.");
+        show("registerMessage", "Account created. Check your email and confirm your address. After confirmation, log in to complete your student application.");
       }
       event.currentTarget.reset();
     } catch (err) {
