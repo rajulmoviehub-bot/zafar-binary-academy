@@ -56,12 +56,12 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 
 <section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><p class="note">Sign in using the email address and password you registered with.</p><form id="loginForm"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Your registered email" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button><p id="loginMessage" class="note" role="status"></p></form><button class="btn outline" id="logoutBtn" type="button" style="display:none">LOG OUT</button><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
 
-<section id="studentDashboard" style="display:none"><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><p class="note">Zoom schedule and private WhatsApp group details are shared by academy administration after payment verification. No payment is collected on this website yet.</p></div></section>
+<section id="studentDashboard" style="display:none"><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><div id="studentClassDetails" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Class access</h3><p><strong>Timetable:</strong> <span id="studentClassSchedule">Not published yet</span></p><p><a id="studentZoomLink" target="_blank" rel="noopener" style="display:none">Open Zoom class</a></p><p><a id="studentWhatsAppLink" target="_blank" rel="noopener" style="display:none">Join private WhatsApp group</a></p></div><p class="note">Payment checkout is not yet active. Payments must be verified manually by academy administration.</p></div></section>
 <section id="certificateVerify"><div class="center"><h2>Certificate Verification</h2><p>Check an academy certificate number.</p></div><div class="card" style="max-width:560px;margin:auto"><form id="verifyCertificateForm"><label>Certificate number</label><input id="verifyCertificateNumber" required placeholder="ZBA-2026-XXXXXXXX"><button class="btn" type="submit">VERIFY CERTIFICATE</button></form><p id="verifyCertificateMessage" class="note" role="status"></p></div></section>
-<section id="admin"><div class="center"><h2>Academy Admin Panel</h2><p>Management dashboard preview</p><span class="pill">ADMIN ACCESS — BACKEND SETUP REQUIRED</span></div>
+<section id="admin"><div class="center"><h2>Academy Admin Panel</h2><p>Secure administrator workspace</p><span class="pill">ADMIN ACCESS</span></div>
 <div class="grid"><div class="grid"><div class="card"><div class="stat" id="adminStudentCount">—</div><p>Student applications</p></div><div class="card"><div class="stat" id="adminPendingCount">—</div><p>Pending applications</p></div><div class="card"><div class="stat" id="adminPaidCount">—</div><p>Payment records marked paid</p></div><div class="card"><div class="stat" id="adminCertificateCount">—</div><p>Certificates issued</p></div></div>
 <div id="adminWorkspace" class="card" style="margin-top:20px;display:none"><h3>Student applications</h3><p class="note">Review each application. Only mark a payment paid after checking your actual payment statement.</p><div style="overflow-x:auto"><table id="adminApplications" style="width:100%;border-collapse:collapse;min-width:760px"><thead><tr><th align="left">Student</th><th align="left">Contact / Country</th><th align="left">Application</th><th align="left">Payment</th><th align="left">Actions</th></tr></thead><tbody></tbody></table></div>
-<hr style="border-color:#40331e;margin:25px 0"><h3>Issue certificate</h3><form id="certificateForm"><label>Student user ID</label><input id="certStudentId" required placeholder="Copy student user ID from application record"><label>Student full name</label><input id="certStudentName" required placeholder="Full name"><label>Course</label><input id="certCourse" value="Full Binary Trading Course" required><label><input id="certCompleted" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student completed the course.</label><br><label><input id="certPassed" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student passed the final assessment.</label><br><button class="btn" type="submit">ISSUE CERTIFICATE</button><p id="certificateMessage" class="note" role="status"></p></form>
+<hr style="border-color:#40331e;margin:25px 0"><h3>Class timetable & private access</h3><p class="note">Only approved students with verified payment can see these details.</p><form id="classSettingsForm"><label>Class timetable / time zone</label><input id="classScheduleInput" placeholder="e.g. Saturday and Sunday, 7:00–8:30 PM EAT" required><label>Zoom meeting URL</label><input id="classZoomInput" type="url" placeholder="https://zoom.us/j/..."><label>Private WhatsApp group invite URL</label><input id="classWhatsAppInput" type="url" placeholder="https://chat.whatsapp.com/..."><button class="btn" type="submit">SAVE CLASS DETAILS</button><p id="classSettingsMessage" class="note" role="status"></p></form><hr style="border-color:#40331e;margin:25px 0"><h3>Issue certificate</h3><form id="certificateForm"><label>Student user ID</label><input id="certStudentId" required placeholder="Copy student user ID from application record"><label>Student full name</label><input id="certStudentName" required placeholder="Full name"><label>Course</label><input id="certCourse" value="Full Binary Trading Course" required><label><input id="certCompleted" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student completed the course.</label><br><label><input id="certPassed" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student passed the final assessment.</label><br><button class="btn" type="submit">ISSUE CERTIFICATE</button><p id="certificateMessage" class="note" role="status"></p></form>
 <h3>Issued certificates</h3><div id="adminCertificates" class="note">Loading...</div></div>
 <div id="adminLocked" class="card" style="margin-top:20px"><h3>Administrator sign-in</h3><p>Sign in using the administrator account <strong>rajulmoviehub@gmail.com</strong>.</p><p class="warning">The dashboard is available only to the authenticated administrator. Payment verification here is manual; no payment gateway is connected yet.</p></div></section>
 
@@ -161,6 +161,13 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     if (error) throw error;
     const { data: certs, error: certError } = await client.from("certificates").select("*").order("created_at", {ascending:false});
     if (certError) throw certError;
+    const {data:classSettings,error:settingsError}=await client.from("academy_class_settings").select("*").eq("id",true).maybeSingle();
+    if(settingsError) throw settingsError;
+    if(classSettings) {
+      document.getElementById("classScheduleInput").value=classSettings.class_schedule||"";
+      document.getElementById("classZoomInput").value=classSettings.zoom_meeting_url||"";
+      document.getElementById("classWhatsAppInput").value=classSettings.whatsapp_group_url||"";
+    }
     document.getElementById("adminWorkspace").style.display = "block";
     document.getElementById("adminLocked").style.display = "none";
     document.getElementById("adminStudentCount").textContent = apps.length;
@@ -173,7 +180,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       const tr = document.createElement("tr");
       const cells = [
         a.passport_name + " | " + a.age + " yrs | ID: " + a.user_id,
-        (a.whatsapp || "") + " | " + (a.country || ""),
+        (a.whatsapp || "") + " | " + (a.country || "") + " | Ref: " + (a.payment_reference || "none"),
         a.application_status,
         a.payment_status
       ];
@@ -181,8 +188,8 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       const action=document.createElement("td"); action.style.padding="10px 8px"; action.style.borderTop="1px solid #40331e";
       const approve=document.createElement("button"); approve.className="btn"; approve.textContent="Approve"; approve.type="button"; approve.onclick=()=>updateApplication(a.id,{application_status:"approved"});
       const decline=document.createElement("button"); decline.className="btn outline"; decline.textContent="Decline"; decline.type="button"; decline.onclick=()=>updateApplication(a.id,{application_status:"declined"});
-      const paid=document.createElement("button"); paid.className="btn"; paid.textContent="Mark paid"; paid.type="button"; paid.onclick=()=>updateApplication(a.id,{payment_status:"paid"});
-      const pending=document.createElement("button"); pending.className="btn outline"; pending.textContent="Set unpaid"; pending.type="button"; pending.onclick=()=>updateApplication(a.id,{payment_status:"pending"});
+      const paid=document.createElement("button"); paid.className="btn"; paid.textContent="Mark paid"; paid.type="button"; paid.onclick=()=>{const ref=prompt("Enter verified payment receipt/reference (required):");if(ref && ref.trim()) updateApplication(a.id,{payment_status:"paid",payment_reference:ref.trim(),payment_verified_at:new Date().toISOString()});};
+      const pending=document.createElement("button"); pending.className="btn outline"; pending.textContent="Set unpaid"; pending.type="button"; pending.onclick=()=>updateApplication(a.id,{payment_status:"pending",payment_reference:null,payment_verified_at:null});
       [approve,decline,paid,pending].forEach(b=>{b.style.padding="7px 9px";b.style.fontSize="12px";action.appendChild(b);});
       tr.appendChild(action); tbody.appendChild(tr);
     });
@@ -195,6 +202,21 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       row.append(p,print);certBox.appendChild(row);
     });
   }
+  document.getElementById("classSettingsForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    const form=event.currentTarget,button=form.querySelector('button[type="submit"]');
+    button.disabled=true;button.textContent="SAVING...";
+    try {
+      const schedule=document.getElementById("classScheduleInput").value.trim();
+      const zoom=document.getElementById("classZoomInput").value.trim();
+      const whatsapp=document.getElementById("classWhatsAppInput").value.trim();
+      for(const link of [zoom,whatsapp]) if(link && !/^https:\/\//i.test(link)) throw new Error("Meeting and group links must begin with https://");
+      const {error}=await client.from("academy_class_settings").upsert({id:true,class_schedule:schedule,zoom_meeting_url:zoom,whatsapp_group_url:whatsapp,updated_at:new Date().toISOString()},{onConflict:"id"});
+      if(error) throw error;
+      show("classSettingsMessage","Class details saved. Eligible paid and approved students can now view them.");
+    } catch(err){show("classSettingsMessage",err.message||"Could not save class details.");}
+    finally{button.disabled=false;button.textContent="SAVE CLASS DETAILS";}
+  });
   async function updateApplication(id, changes) {
     const { error } = await client.from("student_applications").update(changes).eq("id",id);
     if (error) { alert(error.message); return; }
@@ -252,15 +274,28 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
             if(appError) throw appError;
           }
         }
-        const {data:application}=await client.from("student_applications").select("application_status,payment_status,course").eq("user_id",user.id).maybeSingle();
+        const {data:application,error:applicationError}=await client.from("student_applications").select("application_status,payment_status,course").eq("user_id",user.id).maybeSingle();
+        if(applicationError) throw applicationError;
         if(application) {
           document.getElementById("studentDashboard").style.display="block";
           document.getElementById("studentApplicationStatus").textContent=application.application_status;
           document.getElementById("studentPaymentStatus").textContent=application.payment_status;
           document.getElementById("studentCourseName").textContent=application.course;
-          document.getElementById("studentNextStep").textContent=application.payment_status==="paid"
-            ? (application.application_status==="approved" ? "Contact the academy for your class timetable and WhatsApp group invitation." : "Your payment is recorded. Await application approval.")
-            : "Payment checkout is not yet enabled. Contact academy support for official payment instructions.";
+          const eligible=application.payment_status==="paid" && application.application_status==="approved";
+          document.getElementById("studentNextStep").textContent=eligible
+            ? "Your enrolment is approved. Your private class details are shown below."
+            : application.payment_status==="paid" ? "Your payment is recorded. Await application approval." : "Payment checkout is not yet enabled. Contact academy support for official payment instructions.";
+          if(eligible) {
+            const {data:settings,error:settingsError}=await client.from("academy_class_settings").select("*").eq("id",true).maybeSingle();
+            if(settingsError) throw settingsError;
+            if(settings) {
+              document.getElementById("studentClassDetails").style.display="block";
+              document.getElementById("studentClassSchedule").textContent=settings.class_schedule||"Timetable not published.";
+              const zoom=document.getElementById("studentZoomLink"),group=document.getElementById("studentWhatsAppLink");
+              if(settings.zoom_meeting_url){zoom.href=settings.zoom_meeting_url;zoom.style.display="inline-block";}
+              if(settings.whatsapp_group_url){group.href=settings.whatsapp_group_url;group.style.display="inline-block";}
+            }
+          }
           show("loginMessage","Welcome. Your student dashboard is ready below.");
         } else {
           show("loginMessage","Signed in. Your account is active, but no student application was found. Contact academy support.");
