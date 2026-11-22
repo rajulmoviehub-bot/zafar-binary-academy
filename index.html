@@ -46,18 +46,98 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <section><div class="split"><img class="feature-img" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=85" alt="Students learning together"><div><h2>Learn Online. Graduate With Confidence.</h2><p>Classes are planned through Zoom. Confirmed timetable and private WhatsApp group invitation will be shared after enrolment and payment verification.</p><p>Students who complete the course and pass the assessment can receive an academy-issued certificate of completion.</p></div></div>
 <div class="card center" style="margin-top:25px"><h2>Graduation Bonus</h2><h3>Enhanced Auto V6 Binary Bot</h3><p>Graduates are intended to receive the bot free, subject to development and activation. Standalone offer: KSh 28,999; availability and licensing are not active.</p></div></section>
 
-<section id="register"><div class="center"><h2>Student Registration</h2><p>Create your student application.</p></div><div class="card">
-<div class="warning">Registration preview only. Secure account creation and database storage are not connected yet. Do not enter real passport details or passwords here.</div>
-<form onsubmit="event.preventDefault();alert('Online registration is not active yet. Please contact the academy by email.');">
-<div class="form-grid"><div><label>Full names as on passport</label><input required placeholder="Full legal names"></div><div><label>Passport number (demo only)</label><input placeholder="Not stored"></div><div><label>Age (18+)</label><input type="number" min="18" placeholder="Age"></div><div><label>WhatsApp number with country code</label><input placeholder="+254..."></div><div><label>Email address</label><input type="email" required placeholder="you@example.com"></div><div><label>Country</label><select><option>Select country</option><option>Kenya</option><option>Other country</option></select></div><div><label>Create password (demo only)</label><input type="password" placeholder="Do not use a real password"></div><div><label>Confirm password</label><input type="password" placeholder="Demo only"></div></div>
-<label><input type="checkbox" required style="width:auto;margin-right:8px">I agree to the academy terms and privacy notice (preview).</label><br><button class="btn" type="submit">SUBMIT APPLICATION</button></form>
-<p class="note">For current enquiries: <a href="mailto:rajulmoviehub@gmail.com">rajulmoviehub@gmail.com</a>. Do not email passwords or passport numbers.</p></div></section>
+<section id="register"><div class="center"><h2>Student Registration</h2><p>Create your secure student account and submit your course application.</p></div><div class="card">
+<div class="warning">Use your real details only on this secure academy website. You must be 18 or older. Email confirmation may be required before you can log in.</div>
+<form id="registerForm">
+<div class="form-grid"><div><label>Full names as on passport</label><input id="regName" required autocomplete="name" placeholder="Full legal names"></div><div><label>Passport number</label><input id="regPassport" required autocomplete="off" placeholder="Passport number"></div><div><label>Age (18+)</label><input id="regAge" type="number" min="18" required placeholder="Age"></div><div><label>WhatsApp number with country code</label><input id="regWhatsapp" required placeholder="+254..."></div><div><label>Email address</label><input id="regEmail" type="email" required autocomplete="email" placeholder="you@example.com"></div><div><label>Country</label><input id="regCountry" required autocomplete="country-name" placeholder="Your country"></div><div><label>Create password</label><input id="regPassword" type="password" minlength="8" required autocomplete="new-password" placeholder="At least 8 characters"></div><div><label>Confirm password</label><input id="regConfirm" type="password" minlength="8" required autocomplete="new-password" placeholder="Repeat password"></div></div>
+<label><input id="regTerms" type="checkbox" required style="width:auto;margin-right:8px">I agree to the academy terms and privacy notice.</label><br><button class="btn" type="submit">CREATE ACCOUNT & APPLY</button><p id="registerMessage" class="note" role="status"></p></form>
+<p class="note">Support: <a href="mailto:rajulmoviehub@gmail.com">rajulmoviehub@gmail.com</a>. Never send your password by email or WhatsApp.</p></div></section>
 
-<section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><div class="warning">Student login is a visual preview. No account authentication is connected yet.</div><form onsubmit="event.preventDefault();alert('Student login is not active yet.');"><label>Email address</label><input type="email" placeholder="Your registered email" required><label>Password</label><input type="password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button></form><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
+<section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><p class="note">Sign in using the email address and password you registered with.</p><form id="loginForm"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Your registered email" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button><p id="loginMessage" class="note" role="status"></p></form><button class="btn outline" id="logoutBtn" type="button" style="display:none">LOG OUT</button><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
 
 <section id="admin"><div class="center"><h2>Academy Admin Panel</h2><p>Management dashboard preview</p><span class="pill">ADMIN ACCESS — BACKEND SETUP REQUIRED</span></div>
 <div class="grid"><div class="card"><div class="stat">Students</div><p>Review and manage student applications after secure database setup.</p></div><div class="card"><div class="stat">Payments</div><p>Verify course payments after payment-provider integration.</p></div><div class="card"><div class="stat">Certificates</div><p>Issue, search and verify academy certificates when the certificate system is connected.</p></div><div class="card"><div class="stat">Courses</div><p>Manage course content, Zoom timetable and student announcements.</p></div></div>
 <div class="card" style="margin-top:20px"><h3>Administrator sign-in</h3><p>Admin account reserved for <strong>rajulmoviehub@gmail.com</strong> and phone <strong>0714480604</strong>.</p><p class="warning">This panel is not secured or connected to a backend yet. It does not display real student records. A secure server-side admin role and authentication must be installed before use. Do not rely on a front-end-only password check.</p></div></section>
 
 <footer><div class="brand">ZAFAR BINARY ACADEMY</div><p>Founder & Director: Paul M K</p><p>Education • Practice • Risk Awareness</p><p class="note">Binary trading involves substantial risk. Education does not guarantee profits. Academy-issued certificate is not an externally accredited qualification.</p><p>© 2026 ZAFAR BINARY ACADEMY</p></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://vmubnpnhmfljpgehogai.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_e2nUv2WnEyEvroA68ByXmw_55SajdIA";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const show = (id, message) => { const el = document.getElementById(id); if (el) el.textContent = message; };
+
+  document.getElementById("registerForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const name = document.getElementById("regName").value.trim();
+    const passport = document.getElementById("regPassport").value.trim();
+    const age = Number(document.getElementById("regAge").value);
+    const whatsapp = document.getElementById("regWhatsapp").value.trim();
+    const email = document.getElementById("regEmail").value.trim();
+    const country = document.getElementById("regCountry").value.trim();
+    const password = document.getElementById("regPassword").value;
+    const confirm = document.getElementById("regConfirm").value;
+    if (password !== confirm) return show("registerMessage", "Passwords do not match.");
+    if (age < 18) return show("registerMessage", "You must be at least 18 years old to register.");
+    const submit = event.currentTarget.querySelector('button[type="submit"]');
+    submit.disabled = true; submit.textContent = "CREATING ACCOUNT...";
+    show("registerMessage", "Please wait...");
+    try {
+      const { data, error } = await client.auth.signUp({
+        email, password,
+        options: { data: { full_name: name, whatsapp, country }, emailRedirectTo: window.location.origin }
+      });
+      if (error) throw error;
+      if (data.session && data.user) {
+        const { error: appError } = await client.from("student_applications").insert({
+          user_id: data.user.id, passport_name: name, passport_number: passport,
+          age, whatsapp, country
+        });
+        if (appError) throw appError;
+        show("registerMessage", "Account created and application submitted. You can now log in.");
+      } else {
+        show("registerMessage", "Account created. Check your email and confirm your address. After confirmation, log in to complete your student application. Your passport details have not yet been submitted.");
+      }
+      event.currentTarget.reset();
+    } catch (err) {
+      show("registerMessage", err.message || "Registration failed. Please try again.");
+    } finally {
+      submit.disabled = false; submit.textContent = "CREATE ACCOUNT & APPLY";
+    }
+  });
+
+  document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const submit = event.currentTarget.querySelector('button[type="submit"]');
+    submit.disabled = true; submit.textContent = "SIGNING IN...";
+    try {
+      const { data, error } = await client.auth.signInWithPassword({
+        email: document.getElementById("loginEmail").value.trim(),
+        password: document.getElementById("loginPassword").value
+      });
+      if (error) throw error;
+      const { data: profile, error: profileError } = await client.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
+      if (profileError) throw profileError;
+      if (data.user.email?.toLowerCase() === "rajulmoviehub@gmail.com" && profile?.role === "admin") {
+        show("loginMessage", "Admin signed in successfully. Admin dashboard connection is the next setup step.");
+      } else {
+        show("loginMessage", "Signed in successfully. Your student dashboard is being prepared.");
+      }
+      document.getElementById("logoutBtn").style.display = "inline-block";
+    } catch (err) {
+      show("loginMessage", err.message || "Login failed. Check your email and password.");
+    } finally {
+      submit.disabled = false; submit.textContent = "LOGIN";
+    }
+  });
+  document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+    const { error } = await client.auth.signOut();
+    show("loginMessage", error ? error.message : "You are signed out.");
+    document.getElementById("logoutBtn").style.display = "none";
+  });
+})();
+</script>
+
 </body></html>
