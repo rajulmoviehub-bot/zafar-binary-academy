@@ -168,21 +168,20 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     }
     if(classSettings) {
       document.getElementById("classScheduleInput").value=classSettings.class_schedule||"";
-      const academyZoomMeetingUrl="https://us05web.zoom.us/j/3489432693?pwd=mdtvMnYcV2yCxSnCbUMglgWLwENAbU.1";
+      document.getElementById("classZoomInput").value=classSettings.zoom_meeting_url||"";
       const academyWhatsAppInvite="https://chat.whatsapp.com/I5o5C2sjgo9HNAvSwdvNcD?s=cl&p=a&iam=2";
-      document.getElementById("classZoomInput").value=classSettings.zoom_meeting_url||academyZoomMeetingUrl;
       document.getElementById("classWhatsAppInput").value=classSettings.whatsapp_group_url||academyWhatsAppInvite;
-      if(!classSettings.zoom_meeting_url || !classSettings.whatsapp_group_url) {
+      if(!classSettings.whatsapp_group_url) {
         const {error:inviteSaveError}=await client.from("academy_class_settings").upsert({
           id:true,
           class_schedule:classSettings.class_schedule||"Class timetable will be announced by the academy.",
-          zoom_meeting_url:classSettings.zoom_meeting_url||academyZoomMeetingUrl,
-          whatsapp_group_url:classSettings.whatsapp_group_url||academyWhatsAppInvite,
+          zoom_meeting_url:classSettings.zoom_meeting_url||"",
+          whatsapp_group_url:academyWhatsAppInvite,
           updated_at:new Date().toISOString()
         },{onConflict:"id"});
         if(inviteSaveError) {
           const message=document.getElementById("classSettingsMessage");
-          if(message) message.textContent="Zoom and WhatsApp links are ready in the settings fields. Tap SAVE CLASS DETAILS to publish them.";
+          if(message) message.textContent="WhatsApp link is ready in the settings field. Tap SAVE CLASS DETAILS to publish it.";
         }
       }
     }
