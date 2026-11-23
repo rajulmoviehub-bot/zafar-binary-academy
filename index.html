@@ -180,22 +180,22 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     if(error) { show("verifyCertificateMessage","Verification service is unavailable. Please try again later."); return; }
     show("verifyCertificateMessage",data && data.length ? "VALID — "+data[0].student_name+" | "+data[0].course+" | Issued "+data[0].issued_at : "No valid certificate was found with that number.");
   });
+  const qrCertificate=new URLSearchParams(window.location.search).get("certificate");
+  if(qrCertificate){
+    const field=document.getElementById("verifyCertificateNumber");
+    if(field){field.value=qrCertificate;setTimeout(()=>document.getElementById("verifyCertificateForm")?.requestSubmit(),350);}
+  }
   function printCertificate(c) {
     const safe=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
-    const w=window.open("","_blank","width=1000,height=750");
+    const verifyUrl=window.location.origin+"/?certificate="+encodeURIComponent(c.certificate_number)+"#certificateVerify";
+    const w=window.open("","_blank","width=1100,height=800");
     if(!w){alert("Allow pop-ups to print the certificate.");return;}
-    w.document.write(`<!doctype html><html><head><title>${safe(c.certificate_number)}</title><style>
-      @page{size:A4 landscape;margin:12mm}*{box-sizing:border-box}body{margin:0;background:#fff;font-family:Georgia,serif;color:#16120a}.sheet{height:180mm;border:9px double #b58a36;padding:18mm;text-align:center;position:relative}.name{font-size:34px;color:#9b7429;margin:15px 0}.academy{font:bold 30px Arial;letter-spacing:4px;color:#9b7429}.sub{letter-spacing:3px;font:14px Arial;margin:12px}.line{width:65%;margin:8px auto;border-bottom:1px solid #b58a36}.seal{display:inline-block;border:3px double #9b7429;border-radius:50%;padding:15px;margin-top:10px;font:bold 13px Arial;color:#9b7429}.signature{font:bold italic 26px cursive;color:#2457a6;margin-top:10px}.small{font:12px Arial;color:#554b39}.number{font:13px Arial;position:absolute;bottom:12mm;left:0;right:0}
-    </style></head><body><main class="sheet"><div class="academy">ZAFAR BINARY ACADEMY</div><div class="sub">CERTIFICATE OF COMPLETION</div><p>This is proudly presented to</p><div class="name">${safe(c.student_name)}</div><div class="line"></div><p>for successfully completing the course</p><h2>${safe(c.course)}</h2><p>and meeting the academy's course completion requirements.</p><div class="seal">ZAFAR BINARY ACADEMY<br>PMK • EST. 2026<br>FOUNDER & DIRECTOR</div><div class="signature">PMK</div><div class="small">Paul M K · Founder &amp; Director</div><div class="number">Certificate No: ${safe(c.certificate_number)} · Issued: ${safe(c.issued_at)}<br>This is an academy-issued certificate, not an externally accredited qualification.</div></main><script>window.onload=()=>window.print();<\/script>
-<script src="/auto-v6.js" defer><\/script>
-
-
-
-
-
-</body></html>`);
+    w.document.write(`<!doctype html><html><head><title>${safe(c.certificate_number)}</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+      @page{size:A4 landscape;margin:10mm}*{box-sizing:border-box}body{margin:0;background:#fff;color:#000;font-family:Arial,sans-serif}.sheet{height:190mm;padding:15mm 18mm;text-align:center;position:relative;background:#fff}.academy{font:bold 27px Arial;letter-spacing:2px}.sub{font-size:16px;font-weight:bold;letter-spacing:1px;margin:12px}.name{font-size:34px;font-weight:bold;margin:12px 0}.course{font-size:21px;font-weight:bold}.rule{width:70%;border-bottom:1px solid #000;margin:8px auto}.bodycopy{font-size:15px}.signature{font-size:18px;font-weight:bold;margin-top:14px}.small{font-size:11px}.number{font-size:11px;margin-top:12px}.qrwrap{position:absolute;right:18mm;bottom:14mm;text-align:center;font-size:10px}.qr{width:150px;height:150px;margin:0 auto 5px}.qr img{width:150px;height:150px}.verify{position:absolute;left:18mm;bottom:18mm;text-align:left;font-size:10px;max-width:60%}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    </style></head><body><main class="sheet"><div class="academy">ZAFAR BINARY ACADEMY</div><div class="sub">CERTIFICATE OF COMPLETION</div><p class="bodycopy">This certificate is proudly presented to</p><div class="name">${safe(c.student_name)}</div><div class="rule"></div><p class="bodycopy">for successfully completing</p><div class="course">${safe(c.course)}</div><p class="bodycopy">and meeting the academy's course completion requirements.</p><div class="signature">C.E.O PAUL K</div><div class="small">Chief Executive Officer · ZAFAR BINARY ACADEMY</div><div class="verify">Certificate No: ${safe(c.certificate_number)}<br>Issue date: ${safe(c.issued_at)}<br>Scan the QR code to verify this certificate online.</div><div class="qrwrap"><div id="qrcode" class="qr"></div>SCAN TO VERIFY</div></main><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\\/script><script>window.onload=()=>{new QRCode(document.getElementById("qrcode"),{text:${JSON.stringify(verifyUrl)},width:150,height:150,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.H});setTimeout(()=>window.print(),700)};<\\/script></body></html>`);
     w.document.close();
   }
+
   const EXAM_BUCKET="academy-exams";
   const examDate=value=>value?new Date(value).toLocaleString():"No deadline";
   async function uploadExamFile(file,path){
