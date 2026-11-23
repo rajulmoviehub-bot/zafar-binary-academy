@@ -418,7 +418,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       if (user.email?.toLowerCase() === "rajulmoviehub@gmail.com") return;
       let {data: application, error: applicationError} = await client
         .from("student_applications")
-        .select("application_status,payment_status,course")
+        .select("application_status,payment_status,course,country")
         .eq("user_id", user.id)
         .maybeSingle();
       if (applicationError) throw applicationError;
@@ -435,7 +435,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
           });
           if (insertError && !/duplicate|unique/i.test(insertError.message || "")) throw insertError;
           const refreshed = await client.from("student_applications")
-            .select("application_status,payment_status,course")
+            .select("application_status,payment_status,course,country")
             .eq("user_id", user.id).maybeSingle();
           if (refreshed.error) throw refreshed.error;
           application = refreshed.data;
