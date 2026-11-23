@@ -22,6 +22,17 @@ body.academy-review-mode{background:#050505;color:#ff4b55}
 body.academy-review-mode header,body.academy-review-mode .card{background:#080808;border-color:#8f1820}
 body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode h3{color:#ff4b55}
 .academy-review-warning{max-width:720px;margin:0 auto 16px;padding:16px;background:#050505;color:#ff5b62;border:2px solid #d71928;border-left:7px solid #ff2535;font-weight:800;box-shadow:0 0 18px #b0002044}
+
+@keyframes academyGoldBlink {
+  0%,100% { box-shadow:0 0 7px #d5ad5570,0 0 14px #d5ad5530; filter:brightness(1); }
+  50% { box-shadow:0 0 15px #ffd978,0 0 30px #d5ad55,0 0 44px #d5ad5570; filter:brightness(1.16); }
+}
+.btn, button, input[type="submit"], input[type="button"] {
+  animation: academyGoldBlink 1.15s ease-in-out infinite;
+}
+.btn:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
+  box-shadow:0 0 20px #ffd978,0 0 38px #d5ad55;
+}
 </style>
 </head>
 <body>
