@@ -334,7 +334,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
     const {data:markedPapers,error:markedError}=await client.from("academy_exam_submissions").select("*").eq("status","marked").order("marked_at",{ascending:false});
     if(markedError){list.textContent="Could not load marked student papers.";return;}
     list.replaceChildren();
-    if(!exams.length){list.textContent="No examination has been published yet.";return;}
+    if(!exams.length){const emptyExamNotice=document.createElement("p");emptyExamNotice.className="note";emptyExamNotice.textContent="No examination has been published yet.";list.appendChild(emptyExamNotice);}
     for(const exam of exams){
       const card=document.createElement("div");card.style.cssText="border-top:1px solid #40331e;padding:14px 0";
       const heading=document.createElement("strong");heading.textContent=exam.title;
@@ -354,7 +354,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
         const status=document.createElement("p");status.className="note";status.setAttribute("role","status");
         submit.onclick=async()=>{
           const file=input.files[0];if(!file){status.textContent="Choose your completed paper first.";return;}
-          if(!/^application\\/pdf$|^image\\/(jpeg|png)$/.test(file.type)||file.size>15*1024*1024){status.textContent="Use a PDF, JPG or PNG file up to 15 MB.";return;}
+          if(!/^(application\/pdf|image\/(jpeg|png))$/.test(file.type))||file.size>15*1024*1024){status.textContent="Use a PDF, JPG or PNG file up to 15 MB.";return;}
           if(exam.deadline&&Date.now()>new Date(exam.deadline).getTime()){status.textContent="This exam deadline has passed. Your paper was not uploaded.";await recordRuleEvent("late_exam_attempt","Attempted submission after deadline.");return;}
           const {data:existing}=await client.from("academy_exam_submissions").select("id").eq("exam_id",exam.id).eq("student_id",user.id).maybeSingle();
           if(existing){status.textContent="A paper has already been submitted for this exam.";await recordRuleEvent("duplicate_exam_attempt","Attempted a second submission.");submit.disabled=true;return;}
