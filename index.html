@@ -39,14 +39,14 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <div class="card"><img class="course-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=80" alt="Digital practice charts"><h3>08. Practice Simulator</h3><p>Practise with virtual money in a learning environment. No real-money trades.</p></div></div></section>
 
 <section id="practice"><div class="center"><h2>Free Practice Simulator</h2><p>Learn trade discipline with virtual funds only.</p></div><div class="card" style="max-width:760px;margin:auto"><div class="grid"><div><div class="note">VIRTUAL BALANCE</div><div class="price" id="simBalance">$10,000.00</div></div><div><div class="note">SIMULATED PRICE</div><div class="price" id="simPrice">100.00</div></div><div><div class="note">PRACTICE RESULT</div><div class="stat" id="simStats">0 wins / 0 losses</div></div></div><p class="warning">This is a random educational simulation. It is not connected to a broker, live market, payment account or real-money trading. A simulated win does not predict real trading results.</p><label>Virtual stake (USD)</label><input id="simStake" type="number" min="1" max="10000" step="1" value="10"><div class="center"><button id="simRise" class="btn" type="button">PRACTISE RISE</button><button id="simFall" class="btn outline" type="button">PRACTISE FALL</button><button id="simReset" class="btn outline" type="button">RESET $10,000</button></div><p id="simMessage" class="note" role="status">Choose Rise or Fall to begin a 5-tick virtual round. Correct practice prediction earns 80% virtual return; incorrect prediction loses the virtual stake.</p><div id="simTicks" class="note"></div></div></section>
-<section id="fees"><div class="center"><h2>Course Membership</h2><p>Course fees are set in USD. Kenyan Shilling estimates update automatically using the latest available exchange rate.</p></div><div class="grid">
-<div class="card center"><h3>Founding Students</h3><div class="price">$25</div><p>First 20 students only</p><p class="note" id="foundingKes">Kenyan estimate: loading exchange rate…</p><p class="note">Limited introductory offer for the full course.</p><a class="btn" href="#feesPaymentPanel">CONTINUE TO PAYMENT</a></div>
-<div class="card center"><h3>Standard Membership</h3><div class="price">$50</div><p>Full course fee</p><p class="note" id="standardKes">Kenyan estimate: loading exchange rate…</p><p class="note">Online lessons, practice education and final assessment.</p><a class="btn" href="#feesPaymentPanel">CONTINUE TO PAYMENT</a></div></div>
+<section id="fees"><div class="center"><h2>Course Membership</h2><p>Course fees are charged in Kenyan Shillings (KES).</p></div><div class="grid">
+<div class="card center"><h3>Founding Students</h3><div class="price">KSh 10,000</div><p>First 20 paid students only</p><p class="note">Limited introductory offer for the full course.</p><a class="btn" href="#feesPaymentPanel">CONTINUE TO PAYMENT</a></div>
+<div class="card center"><h3>Standard Membership</h3><div class="price">KSh 15,000</div><p>Full course fee</p><p class="note">Online lessons, practice education and final assessment.</p><a class="btn" href="#feesPaymentPanel">CONTINUE TO PAYMENT</a></div></div>
 <div id="feesPaymentPanel" class="card" style="max-width:720px;margin:24px auto 0">
 <h3>Course Fee Payment — M-Pesa</h3>
 <div id="feesPaymentLocked" class="warning"><p>Register for the course and log in first. After login, return to this Fees section to pay. Payment is available only here.</p><a class="btn outline" href="#login" style="display:inline-block;margin-top:10px">LOG IN TO UNLOCK M-PESA</a></div>
 <div id="feesPaymentFormWrap" style="display:none">
-<p class="note">Your applicable course fee is selected securely by the academy server. Enter your Safaricom number to receive an M-Pesa STK Push. Your enrolment remains pending until the academy verifies the payment against its M-Pesa statement.</p>
+<p class="note">Your applicable course fee is selected securely by the academy server: KSh 10,000 for the first 20 paid students, then KSh 15,000. Enter your Safaricom number to receive an M-Pesa STK Push. Your enrolment remains pending until the academy verifies the payment against its M-Pesa statement.</p>
 <form id="studentMpesaForm">
 <label>Safaricom phone number</label>
 <input id="studentMpesaPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0712345678 or +254712345678" required>
@@ -78,7 +78,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <h3>Issued certificates</h3><div id="adminCertificates" class="note">Loading...</div></div>
 <div id="adminLocked" class="card" style="margin-top:20px"><h3>Administrator sign-in</h3><p>Sign in using the administrator account <strong>rajulmoviehub@gmail.com</strong>.</p><p class="warning">The dashboard is available only to the authenticated administrator. M-Pesa checkout still requires a successful live test. Verify every receipt against your actual Safaricom statement before marking a student paid.</p></div></section>
 
-<section id="terms"><div class="center"><h2>Terms, Privacy & Risk Disclosure</h2></div><div class="card"><h3>Education service</h3><p>ZAFAR BINARY ACADEMY provides online educational content and practice activities. It does not provide personal investment advice, manage trading accounts, or guarantee trading results.</p><h3>Eligibility and accounts</h3><p>Registration is limited to people aged 18 or older. Students must provide accurate registration details, protect their passwords, and use only their own account. The academy may review applications and suspend accounts for misuse.</p><h3>Fees and enrolment</h3><p>Course prices are shown in USD. Students register and log in first, then use the Fees section to request M-Pesa payment. A place is not confirmed until the academy verifies payment and approves the application.</p><h3>Privacy</h3><p>Registration details are used to administer student accounts, applications, course communication and certificates. Do not submit passport numbers or upload identity documents through this website. Contact <a href="mailto:rajulmoviehub@gmail.com">rajulmoviehub@gmail.com</a> for privacy requests.</p><h3>Trading risk</h3><p>Binary options and other speculative trading can result in the loss of money. Practice tools are educational only. Past examples and simulated results do not predict future performance.</p><h3>Certificates</h3><p>Certificates are issued by this academy after course completion and assessment. They are not government-issued or externally accredited qualifications.</p></div></section>
+<section id="terms"><div class="center"><h2>Terms, Privacy & Risk Disclosure</h2></div><div class="card"><h3>Education service</h3><p>ZAFAR BINARY ACADEMY provides online educational content and practice activities. It does not provide personal investment advice, manage trading accounts, or guarantee trading results.</p><h3>Eligibility and accounts</h3><p>Registration is limited to people aged 18 or older. Students must provide accurate registration details, protect their passwords, and use only their own account. The academy may review applications and suspend accounts for misuse.</p><h3>Fees and enrolment</h3><p>Course fees are KSh 10,000 for the first 20 paid students and KSh 15,000 thereafter. Students register and log in first, then use the Fees section to request M-Pesa payment. A place is not confirmed until the academy verifies payment and approves the application.</p><h3>Privacy</h3><p>Registration details are used to administer student accounts, applications, course communication and certificates. Do not submit passport numbers or upload identity documents through this website. Contact <a href="mailto:rajulmoviehub@gmail.com">rajulmoviehub@gmail.com</a> for privacy requests.</p><h3>Trading risk</h3><p>Binary options and other speculative trading can result in the loss of money. Practice tools are educational only. Past examples and simulated results do not predict future performance.</p><h3>Certificates</h3><p>Certificates are issued by this academy after course completion and assessment. They are not government-issued or externally accredited qualifications.</p></div></section>
 <footer><div class="brand">ZAFAR BINARY ACADEMY</div><p>Founder & Director: Paul M K</p><p>Education • Practice • Risk Awareness</p><p class="note">Binary trading involves substantial risk. Education does not guarantee profits. Academy-issued certificate is not an externally accredited qualification.</p><p>© 2026 ZAFAR BINARY ACADEMY</p></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -306,7 +306,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       });
       const result=await response.json().catch(()=>({}));
       if(!response.ok) throw new Error(result.error||"M-Pesa could not start the payment.");
-      message.textContent="STK request sent. Pay KSh "+Number(result.amount_kes).toLocaleString("en-KE")+" (course price $"+result.usd_amount+"). Check "+phone+" and enter your M-Pesa PIN. Your account will remain pending until the academy verifies the receipt.";
+      message.textContent="STK request sent. Pay KSh "+Number(result.amount_kes).toLocaleString("en-KE")+". Check "+phone+" and enter your M-Pesa PIN. Your account will remain pending until the academy verifies the receipt.";
     } catch(err) {
       message.textContent=err.message||"Could not start payment. Please try again.";
     } finally {
@@ -453,26 +453,6 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 })();
 </script>
 
-<script>
-// Display-only USD/KES estimates. This does not create or confirm a payment.
-(async function updateAcademyKesEstimates(){
-  const founding=document.getElementById('foundingKes');
-  const standard=document.getElementById('standardKes');
-  const set=(el,msg)=>{if(el)el.textContent=msg;};
-  try{
-    const response=await fetch('https://open.er-api.com/v6/latest/USD',{cache:'no-store'});
-    if(!response.ok) throw new Error('Rate service unavailable');
-    const data=await response.json();
-    const rate=Number(data&&data.rates&&data.rates.KES);
-    if(!Number.isFinite(rate)||rate<=0) throw new Error('KES rate unavailable');
-    const fmt=n=>'KSh '+Math.round(n).toLocaleString('en-KE');
-    set(founding,'Kenyan estimate: '+fmt(25*rate)+' (indicative)');
-    set(standard,'Kenyan estimate: '+fmt(50*rate)+' (indicative)');
-  }catch(_){
-    set(founding,'Kenyan estimate temporarily unavailable — USD $25 applies.');
-    set(standard,'Kenyan estimate temporarily unavailable — USD $50 applies.');
-  }
-})();
-</script>
+
 
 </body></html>
