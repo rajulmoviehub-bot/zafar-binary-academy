@@ -695,8 +695,21 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       }
     }
   };
-  countrySelect.addEventListener("change",applyCountry);
-  registrationCountry.addEventListener("change",()=>{countrySelect.value=registrationCountry.value;applyCountry();});
+  countrySelect.addEventListener("change",()=>{
+    applyCountry();
+    if(!storedLanguage){
+      languageSelect.value=["Kenya","Tanzania","Uganda"].includes(countrySelect.value)?"sw":"en";
+      applyLanguage();
+    }
+  });
+  registrationCountry.addEventListener("change",()=>{
+    countrySelect.value=registrationCountry.value;
+    applyCountry();
+    if(!storedLanguage){
+      languageSelect.value=["Kenya","Tanzania","Uganda"].includes(countrySelect.value)?"sw":"en";
+      applyLanguage();
+    }
+  });
   applyCountry();
 })();
 </script>
