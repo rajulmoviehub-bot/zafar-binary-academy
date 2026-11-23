@@ -68,6 +68,20 @@ create policy "students read own exam submissions" on public.academy_exam_submis
 for select to authenticated
 using (student_id = auth.uid());
 
+-- Once marked, every approved and paid student can read the result record.
+drop policy if exists "eligible students read all marked exam submissions" on public.academy_exam_submissions;
+create policy "eligible students read all marked exam submissions" on public.academy_exam_submissions
+for select to authenticated
+using (
+  status = 'marked'
+  and exists (
+    select 1 from public.student_applications a
+    where a.user_id = auth.uid()
+      and a.application_status = 'approved'
+      and a.payment_status = 'paid'
+  )
+);
+
 drop policy if exists "eligible students submit one paper per exam" on public.academy_exam_submissions;
 create policy "eligible students submit one paper per exam" on public.academy_exam_submissions
 for insert to authenticated
@@ -155,4 +169,24 @@ using (
   bucket_id = 'academy-exams'
   and (storage.foldername(name))[1] = 'submissions'
   and (storage.foldername(name))[2] = auth.uid()::text
+);
+
+-- Permit enrolled students to view a paper file only after its submission is marked.
+drop policy if exists "eligible students read marked exam papers" on storage.objects;
+create policy "eligible students read marked exam papers" on storage.objects
+for select to authenticated
+using (
+  bucket_id = 'academy-exams'
+  and (storage.foldername(name))[1] = 'submissions'
+  and exists (
+    select 1 from public.academy_exam_submissions s
+    where s.file_path = name
+      and s.status = 'marked'
+  )
+  and exists (
+    select 1 from public.student_applications a
+    where a.user_id = auth.uid()
+      and a.application_status = 'approved'
+      and a.payment_status = 'paid'
+  )
 );
