@@ -38,10 +38,10 @@ async function darajaToken() {
 }
 
 function normalizePhone(value) {
-  let phone = String(value || "").replace(/[\\s()+-]/g, "");
+  let phone = String(value || "").replace(/[\s()+-]/g, "");
   if (phone.startsWith("0")) phone = "254" + phone.slice(1);
   if (phone.startsWith("7") || phone.startsWith("1")) phone = "254" + phone;
-  if (!/^254[17]\\d{8}$/.test(phone)) throw new Error("Enter a valid Kenyan Safaricom number, e.g. 0712345678 or +254712345678.");
+  if (!/^254[17]\d{8}$/.test(phone)) throw new Error("Enter a valid Kenyan Safaricom number, e.g. 0712345678 or +254712345678.");
   return phone;
 }
 
