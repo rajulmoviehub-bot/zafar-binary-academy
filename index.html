@@ -82,14 +82,9 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <section id="terms"><div class="center"><h2>Terms, Privacy & Risk Disclosure</h2></div><div class="card"><h3>Education service</h3><p>ZAFAR BINARY ACADEMY provides online educational content and practice activities. It does not provide personal investment advice, manage trading accounts, or guarantee trading results.</p><h3>Eligibility and accounts</h3><p>Registration is limited to people aged 18 or older. Students must provide accurate registration details, protect their passwords, and use only their own account. The academy may review applications and suspend accounts for misuse.</p><h3>Fees and enrolment</h3><p>Course fees are $76.94 for the first 20 paid students and $115.41 thereafter. Displayed USD amounts are indicative conversions and may vary with the payment provider's exchange rate. Students register and log in first, then use the Fees section to request M-Pesa payment. A place is not confirmed until the academy verifies payment and approves the application.</p><h3>Privacy</h3><p>Registration details are used to administer student accounts, applications, course communication and certificates. Do not submit passport numbers or upload identity documents through this website. Contact <a href="mailto:rajulmoviehub@gmail.com">rajulmoviehub@gmail.com</a> for privacy requests.</p><h3>Trading risk</h3><p>Binary options and other speculative trading can result in the loss of money. Practice tools are educational only. Past examples and simulated results do not predict future performance.</p><h3>Certificates</h3><p>Certificates are issued by this academy after course completion and assessment. They are not government-issued or externally accredited qualifications.</p></div></section>
 <footer><div class="brand">ZAFAR BINARY ACADEMY</div><p>Founder & Director: Paul M K</p><p>Education • Practice • Risk Awareness</p><p class="note">Binary trading involves substantial risk. Education does not guarantee profits. Academy-issued certificate is not an externally accredited qualification.</p><p>© 2026 ZAFAR BINARY ACADEMY</p></footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+/* Standalone practice simulator: independent of the authentication CDN. */
 (() => {
-  const SUPABASE_URL = "https://vmubnpnhmfljpgehogai.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_e2nUv2WnEyEvroA68ByXmw_55SajdIA";
-  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-  const show = (id, message) => { const el = document.getElementById(id); if (el) el.textContent = message; };
-
   const simState={balance:10000,price:100,wins:0,losses:0,busy:false};
   const money=n=>"$"+Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
   function renderSim(){document.getElementById("simBalance").textContent=money(simState.balance);document.getElementById("simPrice").textContent=simState.price.toFixed(2);document.getElementById("simStats").textContent=simState.wins+" wins / "+simState.losses+" losses";}
@@ -108,7 +103,18 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     const correct=direction==="RISE"?simState.price>start:simState.price<start;
     if(correct){simState.balance+=stake*.8;simState.wins++;show("simMessage","Virtual WIN. Price moved "+(simState.price>start?"up":"down")+". Virtual profit: "+money(stake*.8)+".");}
     else{simState.balance-=stake;simState.losses++;show("simMessage","Virtual LOSS. Price moved against your prediction. Virtual stake lost: "+money(stake)+".");}
-    renderSim();simState.busy=false;document.getElementById("simRise").disabled=false;document.getElementById("simFall").disabled=false;
+    renderSim();
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://vmubnpnhmfljpgehogai.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_e2nUv2WnEyEvroA68ByXmw_55SajdIA";
+  const client = window.supabase?.createClient ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
+  const show = (id, message) => { const el = document.getElementById(id); if (el) el.textContent = message; };
+
+simState.busy=false;document.getElementById("simRise").disabled=false;document.getElementById("simFall").disabled=false;
   }
   document.getElementById("simRise")?.addEventListener("click",()=>runPractice("RISE"));
   document.getElementById("simFall")?.addEventListener("click",()=>runPractice("FALL"));
@@ -131,6 +137,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     submit.disabled = true; submit.textContent = "CREATING ACCOUNT...";
     show("registerMessage", "Please wait...");
     try {
+      if (!client) throw new Error("The secure login service did not load. Refresh the page or try again shortly.");
       const { data, error } = await client.auth.signUp({
         email, password,
         options: { data: { full_name: name, whatsapp, country, age }, emailRedirectTo: window.location.origin }
@@ -335,6 +342,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     const submit = event.currentTarget.querySelector('button[type="submit"]');
     submit.disabled = true; submit.textContent = "SIGNING IN...";
     try {
+      if (!client) throw new Error("The secure login service did not load. Refresh the page or try again shortly.");
       const { data, error } = await client.auth.signInWithPassword({
         email: document.getElementById("loginEmail").value.trim(),
         password: document.getElementById("loginPassword").value
