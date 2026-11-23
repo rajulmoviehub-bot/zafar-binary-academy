@@ -500,7 +500,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       }catch(_){}
     }
   }
-  const prices=[...fees.querySelectorAll(".price")].filter(el=>/^\$\s*[\d,.]+$/.test(el.textContent.trim()));
+  const prices=[...document.querySelectorAll(".price")].filter(el=>!el.closest("#practice") && /^\$\s*[\d,.]+$/.test(el.textContent.trim()));
   const outputNodes=prices.map(el=>{
     const node=document.createElement("p");
     node.className="note local-price";
