@@ -394,6 +394,8 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     document.getElementById("feesPaymentFormWrap").style.display = "none";
     document.getElementById("feesPaymentLocked").style.display = "block";
 
+  });
+
   // Restore student Fees access when a logged-in student returns or refreshes the page.
   (async function restoreStudentSession() {
     try {
@@ -448,7 +450,6 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       if (message) message.textContent = "Your session is active, but student details could not be loaded. Please contact academy support.";
     }
   })();
-  });
 })();
 </script>
 
