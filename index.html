@@ -18,6 +18,10 @@ section{padding:60px 7%;max-width:1250px;margin:auto}.center{text-align:center}.
 input,select{width:100%;padding:13px;margin:7px 0 15px;background:#101010;border:1px solid #65512c;color:white;border-radius:5px}label{font-size:14px;color:#ddd}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 15px}.stat{font-size:26px;color:var(--gold);font-weight:bold}.pill{display:inline-block;border:1px solid #65512c;padding:4px 10px;border-radius:20px;color:var(--gold);font-size:12px}
 footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{color:var(--gold)}.warning{background:#241d10;border-left:3px solid var(--gold);padding:13px;color:#e7d8b6;font-size:14px}
 @media(max-width:700px){header{align-items:flex-start;flex-direction:column}.split,.form-grid{grid-template-columns:1fr}.hero{padding:65px 18px}nav{gap:12px}}
+body.academy-review-mode{background:#050505;color:#ff4b55}
+body.academy-review-mode header,body.academy-review-mode .card{background:#080808;border-color:#8f1820}
+body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode h3{color:#ff4b55}
+.academy-review-warning{max-width:720px;margin:0 auto 16px;padding:16px;background:#050505;color:#ff5b62;border:2px solid #d71928;border-left:7px solid #ff2535;font-weight:800;box-shadow:0 0 18px #b0002044}
 </style>
 </head>
 <body>
@@ -70,7 +74,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><p class="note">Sign in using the email address and password you registered with.</p><form id="loginForm"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Your registered email" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button><p id="loginMessage" class="note" role="status"></p></form><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
 <div class="center" style="padding:10px"><p id="authStatusMessage" class="note" role="status" style="display:none"></p><button class="btn outline" id="logoutBtn" type="button" style="display:none">LOG OUT</button></div>
 
-<section id="studentDashboard" style="display:none"><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Country:</strong> <span id="studentCountry">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><div id="studentExams" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Examinations</h3><p class="note">Download published exam papers, complete your work and upload your answers for marking.</p><div id="studentExamList" class="note">Loading examinations...</div></div><div id="studentClassDetails" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Class access</h3><p><strong>Timetable:</strong> <span id="studentClassSchedule">Not published yet</span></p><p><a id="studentZoomLink" target="_blank" rel="noopener" style="display:none">Open Zoom class</a></p><p><a id="studentWhatsAppLink" target="_blank" rel="noopener" style="display:none">Join private WhatsApp group</a></p></div></div></section>
+<section id="studentDashboard" style="display:none"><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div id="disciplineNotice" class="warning" role="status" aria-live="polite" style="display:none;max-width:720px;margin:0 auto 16px"></div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Country:</strong> <span id="studentCountry">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><div id="studentExams" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Examinations</h3><p class="note">Download published exam papers, complete your work and upload your answers for marking.</p><div id="studentExamList" class="note">Loading examinations...</div></div><div id="studentClassDetails" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Class access</h3><p><strong>Timetable:</strong> <span id="studentClassSchedule">Not published yet</span></p><p><a id="studentZoomLink" target="_blank" rel="noopener" style="display:none">Open Zoom class</a></p><p><a id="studentWhatsAppLink" target="_blank" rel="noopener" style="display:none">Join private WhatsApp group</a></p></div></div></section>
 <section id="certificateVerify"><div class="center"><h2>Certificate Verification</h2><p>Check an academy certificate number.</p></div><div class="card" style="max-width:560px;margin:auto"><form id="verifyCertificateForm"><label>Certificate number</label><input id="verifyCertificateNumber" required placeholder="ZBA-2026-XXXXXXXX"><button class="btn" type="submit">VERIFY CERTIFICATE</button></form><p id="verifyCertificateMessage" class="note" role="status"></p></div></section>
 <section id="admin"><div class="center"><h2>Academy Admin Panel</h2><p>Secure administrator workspace</p><span class="pill">ADMIN ACCESS</span></div>
 <div class="grid"><div class="grid"><div class="card"><div class="stat" id="adminStudentCount">—</div><p>Student applications</p></div><div class="card"><div class="stat" id="adminPendingCount">—</div><p>Pending applications</p></div><div class="card"><div class="stat" id="adminPaidCount">—</div><p>Payment records marked paid</p></div><div class="card"><div class="stat" id="adminCertificateCount">—</div><p>Certificates issued</p></div></div>
@@ -144,6 +148,22 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_e2nUv2WnEyEvroA68ByXmw_55SajdIA";
   const client = window.supabase?.createClient ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
   const show = (id, message) => { const el = document.getElementById(id); if (el) el.textContent = message; };
+   async function recordRuleEvent(code,details){
+     try{const {data,error}=await client.rpc("record_academy_rule_event",{p_event_code:code,p_details:details||""});if(error||!data)return;
+       const n=document.getElementById("disciplineNotice");if(!n)return;n.style.display="block";
+       if(data.level==="review"){document.body.classList.add("academy-review-mode");n.className="academy-review-warning";n.textContent="ACCOUNT UNDER REVIEW — Repeated exam-rule events ("+data.count+"). This is not an automatic suspension. Contact academy support for review.";}
+       else{n.className="warning";n.textContent="⚠️ ACADEMY RULE REMINDER — "+data.message+" Your account remains active.";}
+     }catch(e){console.warn("Rule monitor unavailable",e);}
+   }
+   async function loadRuleNotice(){
+     try{const {data,error}=await client.from("academy_rule_events").select("event_code,created_at").order("created_at",{ascending:false}).limit(10);if(error||!data?.length)return;
+       const recent=data.filter(x=>Date.now()-new Date(x.created_at).getTime()<30*86400000);if(!recent.length)return;
+       const n=document.getElementById("disciplineNotice");if(!n)return;n.style.display="block";
+       if(recent.length>=3){document.body.classList.add("academy-review-mode");n.className="academy-review-warning";n.textContent="ACCOUNT UNDER REVIEW — "+recent.length+" exam-rule events in the last 30 days. This is not an automatic suspension.";}
+       else{n.className="warning";n.textContent="⚠️ ACADEMY RULE REMINDER — "+recent.length+" exam-rule event(s) recorded recently. Follow exam deadlines and submit only one paper per exam.";}
+     }catch(_){}
+   }
+
 
 
 
@@ -334,13 +354,16 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
         const status=document.createElement("p");status.className="note";status.setAttribute("role","status");
         submit.onclick=async()=>{
           const file=input.files[0];if(!file){status.textContent="Choose your completed paper first.";return;}
-          if(!/^application\/pdf$|^image\/(jpeg|png)$/.test(file.type)||file.size>15*1024*1024){status.textContent="Use a PDF, JPG or PNG file up to 15 MB.";return;}
+          if(!/^application\\/pdf$|^image\\/(jpeg|png)$/.test(file.type)||file.size>15*1024*1024){status.textContent="Use a PDF, JPG or PNG file up to 15 MB.";return;}
+          if(exam.deadline&&Date.now()>new Date(exam.deadline).getTime()){status.textContent="This exam deadline has passed. Your paper was not uploaded.";await recordRuleEvent("late_exam_attempt","Attempted submission after deadline.");return;}
+          const {data:existing}=await client.from("academy_exam_submissions").select("id").eq("exam_id",exam.id).eq("student_id",user.id).maybeSingle();
+          if(existing){status.textContent="A paper has already been submitted for this exam.";await recordRuleEvent("duplicate_exam_attempt","Attempted a second submission.");submit.disabled=true;return;}
           submit.disabled=true;status.textContent="Uploading your paper...";
           try{
             const path="submissions/"+user.id+"/"+exam.id+"/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
             await uploadExamFile(file,path);
             const {error:insertError}=await client.from("academy_exam_submissions").insert({exam_id:exam.id,student_id:user.id,student_name:user.user_metadata?.full_name||user.email||"Student",exam_title:exam.title,file_path:path,status:"submitted"});
-            if(insertError)throw insertError;
+            if(insertError){if(/duplicate|unique/i.test(insertError.message||""))await recordRuleEvent("duplicate_exam_attempt","Database rejected duplicate paper.");throw insertError;}
             status.textContent="Paper submitted successfully. Your teacher will mark it and publish your score and feedback here.";
             await loadStudentExams(user);
           }catch(e){status.textContent=e.message||"Could not submit paper.";submit.disabled=false;}
@@ -583,6 +606,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
         if(application) {
           document.getElementById("studentDashboard").style.display="block";
           await loadStudentExams(user);
+       await loadRuleNotice();
           document.getElementById("feesPaymentLocked").style.display="none";
           document.getElementById("feesPaymentFormWrap").style.display="block";
           document.getElementById("studentApplicationStatus").textContent=application.application_status;
@@ -698,6 +722,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       document.getElementById("feesPaymentFormWrap").style.display = "block";
       document.getElementById("studentDashboard").style.display = "block";
       await loadStudentExams(user);
+       await loadRuleNotice();
       document.getElementById("studentApplicationStatus").textContent = application.application_status || "pending";
       document.getElementById("studentPaymentStatus").textContent = application.payment_status || "unpaid";
       document.getElementById("studentCourseName").textContent = application.course || "Full Binary Trading Course";
