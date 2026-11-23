@@ -83,27 +83,33 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <footer><div class="brand">ZAFAR BINARY ACADEMY</div><p>Founder & Director: Paul M K</p><p>Education • Practice • Risk Awareness</p><p class="note">Binary trading involves substantial risk. Education does not guarantee profits. Academy-issued certificate is not an externally accredited qualification.</p><p>© 2026 ZAFAR BINARY ACADEMY</p></footer>
 
 <script>
-/* Standalone practice simulator: independent of the authentication CDN. */
+/* Standalone practice simulator: independent of authentication loading. */
 (() => {
+  const showSim = (id, message) => { const el=document.getElementById(id); if(el) el.textContent=message; };
   const simState={balance:10000,price:100,wins:0,losses:0,busy:false};
   const money=n=>"$"+Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
   function renderSim(){document.getElementById("simBalance").textContent=money(simState.balance);document.getElementById("simPrice").textContent=simState.price.toFixed(2);document.getElementById("simStats").textContent=simState.wins+" wins / "+simState.losses+" losses";}
   async function runPractice(direction){
     if(simState.busy)return;
     const stake=Number(document.getElementById("simStake").value);
-    if(!Number.isFinite(stake)||stake<1||stake>simState.balance){show("simMessage","Enter a stake of at least $1 and no more than your virtual balance.");return;}
+    if(!Number.isFinite(stake)||stake<1||stake>simState.balance){showSim("simMessage","Enter a stake of at least $1 and no more than your virtual balance.");return;}
     simState.busy=true;document.getElementById("simRise").disabled=true;document.getElementById("simFall").disabled=true;
     const start=simState.price;let ticks=[];
-    show("simMessage","Round running: "+direction+" prediction. Virtual price is moving...");
+    showSim("simMessage","Round running: "+direction+" prediction. Virtual price is moving...");
     for(let i=0;i<5;i++){
       await new Promise(resolve=>setTimeout(resolve,450));
       simState.price=Math.max(1,simState.price+(Math.random()-.5)*1.4);
       ticks.push(simState.price.toFixed(2));document.getElementById("simTicks").textContent="Tick "+(i+1)+"/5: "+ticks.join(" → ");renderSim();
     }
     const correct=direction==="RISE"?simState.price>start:simState.price<start;
-    if(correct){simState.balance+=stake*.8;simState.wins++;show("simMessage","Virtual WIN. Price moved "+(simState.price>start?"up":"down")+". Virtual profit: "+money(stake*.8)+".");}
-    else{simState.balance-=stake;simState.losses++;show("simMessage","Virtual LOSS. Price moved against your prediction. Virtual stake lost: "+money(stake)+".");}
-    renderSim();
+    if(correct){simState.balance+=stake*.8;simState.wins++;showSim("simMessage","Virtual WIN. Price moved "+(simState.price>start?"up":"down")+". Virtual profit: "+money(stake*.8)+".");}
+    else{simState.balance-=stake;simState.losses++;showSim("simMessage","Virtual LOSS. Price moved against your prediction. Virtual stake lost: "+money(stake)+".");}
+    renderSim();simState.busy=false;document.getElementById("simRise").disabled=false;document.getElementById("simFall").disabled=false;
+  }
+  document.getElementById("simRise")?.addEventListener("click",()=>runPractice("RISE"));
+  document.getElementById("simFall")?.addEventListener("click",()=>runPractice("FALL"));
+  document.getElementById("simReset")?.addEventListener("click",()=>{if(simState.busy)return;simState.balance=10000;simState.price=100;simState.wins=0;simState.losses=0;document.getElementById("simTicks").textContent="";showSim("simMessage","Practice balance reset to $10,000 virtual funds.");renderSim();});
+  renderSim();
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -114,12 +120,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
   const client = window.supabase?.createClient ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
   const show = (id, message) => { const el = document.getElementById(id); if (el) el.textContent = message; };
 
-simState.busy=false;document.getElementById("simRise").disabled=false;document.getElementById("simFall").disabled=false;
-  }
-  document.getElementById("simRise")?.addEventListener("click",()=>runPractice("RISE"));
-  document.getElementById("simFall")?.addEventListener("click",()=>runPractice("FALL"));
-  document.getElementById("simReset")?.addEventListener("click",()=>{if(simState.busy)return;simState.balance=10000;simState.price=100;simState.wins=0;simState.losses=0;document.getElementById("simTicks").textContent="";show("simMessage","Practice balance reset to $10,000 virtual funds.");renderSim();});
-  renderSim();
+
 
   document.getElementById("registerForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
