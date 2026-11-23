@@ -204,7 +204,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
     const name=application?.passport_name||user.user_metadata?.full_name||"Student";
     const email=user.email||"";
     const id=String(user.id||"").slice(0,12);
-    const stamp="ZAFAR BINARY ACADEMY • "+name+" • "+email+" • STUDENT "+id;
+    user.__academyStudentName=name;\n    const stamp="ZAFAR BINARY ACADEMY • "+name+" • "+email+" • STUDENT "+id;
     const mark=document.getElementById("studentSecurityWatermark");
     if(mark) mark.textContent=stamp+"\n"+stamp;
     const notice=document.getElementById("studentProtectionNotice");
@@ -220,7 +220,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
       const response=await fetch(signedUrl);
       if(!response.ok) throw new Error("Protected file could not be retrieved.");
       const sourceBlob=await response.blob();
-      const identity=(user.user_metadata?.full_name||"Student")+" • "+(user.email||"")+" • "+String(user.id||"").slice(0,12);
+      const identity=(user.__academyStudentName||user.user_metadata?.full_name||"Student")+" • "+(user.email||"")+" • "+String(user.id||"").slice(0,12);
       let outputBlob;
       if(sourceBlob.type==="application/pdf" || /\.pdf$/i.test(path)){
         if(!window.PDFLib) throw new Error("The secure PDF watermark service did not load. Please try again later.");
@@ -229,7 +229,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
         const font=await pdf.embedFont(StandardFonts.HelveticaBold);
         for(const page of pdf.getPages()){
           const size=page.getSize();
-          const label="ZAFAR BINARY ACADEMY - COPY FOR "+identity.replace(/[^\\x20-\\x7E]/g," ");
+          const label="ZAFAR BINARY ACADEMY - COPY FOR "+identity.replace(/[^\\x20-\\x7E]/g," ").slice(0,150);
           for(const y of [size.height*.28,size.height*.58]){
             page.drawText(label,{x:18,y,font,size:Math.max(10,Math.min(19,size.width/38)),color:rgb(.72,.12,.12),opacity:.24,rotate:degrees(28),maxWidth:size.width*1.3});
           }
