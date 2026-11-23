@@ -67,12 +67,8 @@ module.exports = async function handler(req, res) {
     if (application.payment_status === "paid") return json(res, 409, { error: "Your course payment is already recorded." });
 
     const paid = await supabaseRequest("/rest/v1/student_applications?payment_status=eq.paid&select=id");
-    const usdAmount = paid.length < 20 ? 25 : 50;
-    const rateResponse = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
-    const rateData = await rateResponse.json().catch(() => ({}));
-    const rate = Number(rateData && rateData.rates && rateData.rates.KES);
-    if (!rateResponse.ok || !Number.isFinite(rate) || rate <= 0) throw new Error("Live USD/KES exchange rate is unavailable. Please try again later.");
-    const amount = Math.max(1, Math.round(usdAmount * rate));
+    const foundingOffer = paid.length < 20;
+    const amount = foundingOffer ? 10000 : 15000;
 
     const shortcode = env("MPESA_SHORTCODE");
     const passkey = env("MPESA_PASSKEY");
@@ -85,7 +81,7 @@ module.exports = async function handler(req, res) {
       method: "POST",
       body: JSON.stringify({
         id, user_id: user.id, application_id: application.id, amount_kes: amount,
-        usd_amount: usdAmount, exchange_rate: rate, phone, status: "initiating"
+        fee_amount_kes: amount, phone, status: "initiating"
       })
     });
 
@@ -128,7 +124,7 @@ module.exports = async function handler(req, res) {
       })
     });
     return json(res, 200, {
-      ok: true, payment_id: id, amount_kes: amount, usd_amount: usdAmount,
+      ok: true, payment_id: id, amount_kes: amount, founding_offer: foundingOffer,
       checkout_request_id: result.CheckoutRequestID,
       message: "Check your phone and enter your M-Pesa PIN. Payment remains pending until the academy verifies the Safaricom receipt."
     });
