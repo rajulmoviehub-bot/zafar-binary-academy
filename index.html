@@ -67,7 +67,8 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <label><input id="regTerms" type="checkbox" required style="width:auto;margin-right:8px">I agree to the academy terms and privacy notice.</label><br><button class="btn" type="submit">CREATE ACCOUNT & APPLY</button><p id="registerMessage" class="note" role="status"></p></form>
 <p class="note">Support: <a href="mailto:rajulmoviehub@gmail.com">rajulmoviehub@gmail.com</a>. Never send your password by email or WhatsApp.</p></div></section>
 
-<section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><p class="note">Sign in using the email address and password you registered with.</p><form id="loginForm"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Your registered email" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button><p id="loginMessage" class="note" role="status"></p></form><button class="btn outline" id="logoutBtn" type="button" style="display:none">LOG OUT</button><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
+<section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><p class="note">Sign in using the email address and password you registered with.</p><form id="loginForm"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Your registered email" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button><p id="loginMessage" class="note" role="status"></p></form><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
+<div class="center" style="padding:10px"><p id="authStatusMessage" class="note" role="status" style="display:none"></p><button class="btn outline" id="logoutBtn" type="button" style="display:none">LOG OUT</button></div>
 
 <section id="studentDashboard" style="display:none"><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Country:</strong> <span id="studentCountry">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><div id="studentClassDetails" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Class access</h3><p><strong>Timetable:</strong> <span id="studentClassSchedule">Not published yet</span></p><p><a id="studentZoomLink" target="_blank" rel="noopener" style="display:none">Open Zoom class</a></p><p><a id="studentWhatsAppLink" target="_blank" rel="noopener" style="display:none">Join private WhatsApp group</a></p></div></div></section>
 <section id="certificateVerify"><div class="center"><h2>Certificate Verification</h2><p>Check an academy certificate number.</p></div><div class="card" style="max-width:560px;margin:auto"><form id="verifyCertificateForm"><label>Certificate number</label><input id="verifyCertificateNumber" required placeholder="ZBA-2026-XXXXXXXX"><button class="btn" type="submit">VERIFY CERTIFICATE</button></form><p id="verifyCertificateMessage" class="note" role="status"></p></div></section>
@@ -320,6 +321,15 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     }
   });
 
+  function updateAuthPanel(isLoggedIn, message) {
+    const loginSection=document.getElementById("login");
+    const logoutButton=document.getElementById("logoutBtn");
+    const status=document.getElementById("authStatusMessage");
+    if(loginSection) loginSection.style.display=isLoggedIn?"none":"block";
+    if(logoutButton) logoutButton.style.display=isLoggedIn?"inline-block":"none";
+    if(status) { status.textContent=message||""; status.style.display=message?"block":"none"; }
+  }
+
   document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const submit = event.currentTarget.querySelector('button[type="submit"]');
@@ -389,7 +399,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
           show("loginMessage","You are signed in, but no course application was found. Payment has not been enabled.");
         }
       }
-      document.getElementById("logoutBtn").style.display = "inline-block";
+      updateAuthPanel(true, isAdmin ? "Administrator signed in. Your management dashboard is ready." : "You are signed in. Your student area is available below.");
     } catch (err) {
       show("loginMessage", err.message || "Login failed. Check your email and password.");
     } finally {
@@ -398,8 +408,8 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
   });
   document.getElementById("logoutBtn")?.addEventListener("click", async () => {
     const { error } = await client.auth.signOut();
+    updateAuthPanel(false, "");
     show("loginMessage", error ? error.message : "You are signed out.");
-    document.getElementById("logoutBtn").style.display = "none";
     document.getElementById("admin").style.display = "none";
     document.getElementById("adminWorkspace").style.display = "none";
     document.getElementById("adminLocked").style.display = "block";
@@ -415,7 +425,11 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       const {data: sessionData, error: sessionError} = await client.auth.getSession();
       if (sessionError || !sessionData.session?.user) return;
       const user = sessionData.session.user;
-      if (user.email?.toLowerCase() === "rajulmoviehub@gmail.com") return;
+      if (user.email?.toLowerCase() === "rajulmoviehub@gmail.com") {
+        await loadAdminDashboard();
+        updateAuthPanel(true, "Administrator session restored. Your management dashboard is ready.");
+        return;
+      }
       let {data: application, error: applicationError} = await client
         .from("student_applications")
         .select("application_status,payment_status,course,country")
@@ -463,7 +477,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
           : mpesaAllowed
             ? "Return to the Fees section to request your course payment with M-Pesa."
             : "International checkout is not active for "+(studentCountry||"your country")+" yet. Please wait for an official payment option; do not send money unofficially.";
-      document.getElementById("logoutBtn").style.display = "inline-block";
+      updateAuthPanel(true, "Your student session has been restored.");
     } catch (err) {
       console.error("Could not restore student Fees access:", err);
       const message = document.getElementById("loginMessage");
@@ -678,10 +692,8 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     try{localStorage.setItem("zba_student_timezone",zoneSelect.value)}catch(_){}
     if(zoneSelect.value) scheduleNode.textContent=localClassRows(zoneSelect.value);
   });
-  let storedLanguage="";
-  try{storedLanguage=localStorage.getItem("zba_language")||""}catch(_){}
-  const suggestedLanguage=["Kenya","Tanzania","Uganda"].includes(countrySelect.value)?"sw":"en";
-  languageSelect.value=(storedLanguage==="sw"||storedLanguage==="en")?storedLanguage:suggestedLanguage;
+  let storedLanguage="en";
+  languageSelect.value="en";
   languageSelect.addEventListener("change",applyLanguage);
   applyLanguage();
   window.zbaGetLocalClassSchedule=function(){
@@ -692,18 +704,10 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       countrySelect.value=country;
       registrationCountry.value=country;
       applyCountry();
-      if(!storedLanguage){
-        languageSelect.value=["Kenya","Tanzania","Uganda"].includes(country)?"sw":"en";
-        applyLanguage();
-      }
     }
   };
   countrySelect.addEventListener("change",()=>{
     applyCountry();
-    if(!storedLanguage){
-      languageSelect.value=["Kenya","Tanzania","Uganda"].includes(countrySelect.value)?"sw":"en";
-      applyLanguage();
-    }
   });
   registrationCountry.addEventListener("change",()=>{
     countrySelect.value=registrationCountry.value;
