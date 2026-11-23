@@ -74,7 +74,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <section id="certificateVerify"><div class="center"><h2>Certificate Verification</h2><p>Check an academy certificate number.</p></div><div class="card" style="max-width:560px;margin:auto"><form id="verifyCertificateForm"><label>Certificate number</label><input id="verifyCertificateNumber" required placeholder="ZBA-2026-XXXXXXXX"><button class="btn" type="submit">VERIFY CERTIFICATE</button></form><p id="verifyCertificateMessage" class="note" role="status"></p></div></section>
 <section id="admin"><div class="center"><h2>Academy Admin Panel</h2><p>Secure administrator workspace</p><span class="pill">ADMIN ACCESS</span></div>
 <div class="grid"><div class="grid"><div class="card"><div class="stat" id="adminStudentCount">—</div><p>Student applications</p></div><div class="card"><div class="stat" id="adminPendingCount">—</div><p>Pending applications</p></div><div class="card"><div class="stat" id="adminPaidCount">—</div><p>Payment records marked paid</p></div><div class="card"><div class="stat" id="adminCertificateCount">—</div><p>Certificates issued</p></div></div>
-<div id="adminWorkspace" class="card" style="margin-top:20px;display:none"><h3>Student applications</h3><p class="note">Review each application. Only mark a payment paid after checking your actual payment statement.</p><div style="overflow-x:auto"><table id="adminApplications" style="width:100%;border-collapse:collapse;min-width:760px"><thead><tr><th align="left">Student</th><th align="left">Contact / Country</th><th align="left">Application</th><th align="left">Payment</th><th align="left">Actions</th></tr></thead><tbody></tbody></table></div>
+<div id="adminWorkspace" class="card" style="margin-top:20px;display:none"><h3>Student management</h3><p class="note">Search students by name, email (if stored), WhatsApp, country, student ID or payment reference. Only mark a payment paid after checking your actual payment statement.</p><div class="form-grid" style="margin:14px 0"><div><label for="adminStudentSearch">Search students</label><input id="adminStudentSearch" type="search" placeholder="Name, email, phone, ID or receipt" autocomplete="off"></div><div><label for="adminApplicationFilter">Application status</label><select id="adminApplicationFilter"><option value="all">All applications</option><option value="submitted">Submitted / pending</option><option value="approved">Approved</option><option value="declined">Declined</option></select></div><div><label for="adminPaymentFilter">Payment status</label><select id="adminPaymentFilter"><option value="all">All payment statuses</option><option value="paid">Paid</option><option value="unpaid">Unpaid</option><option value="pending">Pending</option></select></div><div style="display:flex;align-items:end;gap:8px"><button id="adminRefreshStudents" class="btn outline" type="button">REFRESH LIST</button><span id="adminStudentResults" class="note" role="status" style="padding-bottom:16px"></span></div></div><div class="warning" style="margin-bottom:12px">Student records are shown from the academy database. Email is searchable only if it is present in the application record; the login email is not fetched from the private authentication directory.</div><div style="overflow-x:auto"><table id="adminApplications" style="width:100%;border-collapse:collapse;min-width:760px"><thead><tr><th align="left">Student</th><th align="left">Contact / Country</th><th align="left">Application</th><th align="left">Payment</th><th align="left">Actions</th></tr></thead><tbody></tbody></table></div>
 <hr style="border-color:#40331e;margin:25px 0"><h3>Class timetable & private access</h3><p class="note">Only approved students with verified payment can see these details.</p><form id="classSettingsForm"><label>Class timetable / time zone</label><input id="classScheduleInput" placeholder="e.g. Saturday and Sunday, 7:00–8:30 PM EAT" required><label>Zoom meeting URL</label><input id="classZoomInput" type="url" placeholder="https://zoom.us/j/..."><label>Private WhatsApp group invite URL</label><input id="classWhatsAppInput" type="url" placeholder="https://chat.whatsapp.com/..."><button class="btn" type="submit">SAVE CLASS DETAILS</button><p id="classSettingsMessage" class="note" role="status"></p></form><hr style="border-color:#40331e;margin:25px 0"><h3>Issue certificate</h3><form id="certificateForm"><label>Student user ID</label><input id="certStudentId" required placeholder="Copy student user ID from application record"><label>Student full name</label><input id="certStudentName" required placeholder="Full name"><label>Course</label><input id="certCourse" value="Full Binary Trading Course" required><label><input id="certCompleted" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student completed the course.</label><br><label><input id="certPassed" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student passed the final assessment.</label><br><button class="btn" type="submit">ISSUE CERTIFICATE</button><p id="certificateMessage" class="note" role="status"></p></form>
 <h3>Issued certificates</h3><div id="adminCertificates" class="note">Loading...</div></div>
 <div id="adminLocked" class="card" style="margin-top:20px"><h3>Administrator sign-in</h3><p>Sign in using the administrator account <strong>rajulmoviehub@gmail.com</strong>.</p><p class="warning">The dashboard is available only to the authenticated administrator. M-Pesa checkout still requires a successful live test. Verify every receipt against your actual Safaricom statement before marking a student paid.</p></div></section>
@@ -231,24 +231,50 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     document.getElementById("adminPaidCount").textContent = apps.filter(a=>a.payment_status==="paid").length;
     document.getElementById("adminCertificateCount").textContent = certs.length;
     const tbody = document.querySelector("#adminApplications tbody");
-    tbody.replaceChildren();
-    apps.forEach(a => {
-      const tr = document.createElement("tr");
-      const cells = [
-        a.passport_name + " | " + a.age + " yrs | ID: " + a.user_id,
-        (a.whatsapp || "") + " | " + (a.country || "") + " | Ref: " + (a.payment_reference || "none"),
-        a.application_status,
-        a.payment_status
-      ];
-      cells.forEach(value => { const td=document.createElement("td"); td.textContent=value; td.style.padding="10px 8px"; td.style.borderTop="1px solid #40331e"; tr.appendChild(td); });
-      const action=document.createElement("td"); action.style.padding="10px 8px"; action.style.borderTop="1px solid #40331e";
-      const approve=document.createElement("button"); approve.className="btn"; approve.textContent="Approve"; approve.type="button"; approve.onclick=()=>updateApplication(a.id,{application_status:"approved"});
-      const decline=document.createElement("button"); decline.className="btn outline"; decline.textContent="Decline"; decline.type="button"; decline.onclick=()=>updateApplication(a.id,{application_status:"declined"});
-      const paid=document.createElement("button"); paid.className="btn"; paid.textContent="Mark paid"; paid.type="button"; paid.onclick=()=>{const ref=prompt("Enter verified payment receipt/reference (required):");if(ref && ref.trim()) updateApplication(a.id,{payment_status:"paid",payment_reference:ref.trim(),payment_verified_at:new Date().toISOString()});};
-      const pending=document.createElement("button"); pending.className="btn outline"; pending.textContent="Set unpaid"; pending.type="button"; pending.onclick=()=>updateApplication(a.id,{payment_status:"pending",payment_reference:null,payment_verified_at:null});
-      [approve,decline,paid,pending].forEach(b=>{b.style.padding="7px 9px";b.style.fontSize="12px";action.appendChild(b);});
-      tr.appendChild(action); tbody.appendChild(tr);
-    });
+    const searchInput=document.getElementById("adminStudentSearch");
+    const applicationFilter=document.getElementById("adminApplicationFilter");
+    const paymentFilter=document.getElementById("adminPaymentFilter");
+    const resultsLabel=document.getElementById("adminStudentResults");
+    function renderAdminStudents(){
+      const query=(searchInput?.value||"").trim().toLowerCase();
+      const appStatus=applicationFilter?.value||"all";
+      const payStatus=paymentFilter?.value||"all";
+      const filtered=apps.filter(a=>{
+        const haystack=[a.passport_name,a.email,a.whatsapp,a.country,a.user_id,a.payment_reference,a.course,a.application_status,a.payment_status].filter(Boolean).join(" ").toLowerCase();
+        const appMatch=appStatus==="all" || (appStatus==="submitted" ? ["submitted","pending"].includes(String(a.application_status||"").toLowerCase()) : String(a.application_status||"").toLowerCase()===appStatus);
+        const payment=String(a.payment_status||"unpaid").toLowerCase();
+        const payMatch=payStatus==="all" || (payStatus==="unpaid" ? ["unpaid",""].includes(payment) : payment===payStatus);
+        return haystack.includes(query) && appMatch && payMatch;
+      });
+      tbody.replaceChildren();
+      if(resultsLabel) resultsLabel.textContent=filtered.length+" of "+apps.length+" students";
+      if(!filtered.length){
+        const tr=document.createElement("tr"),td=document.createElement("td");
+        td.colSpan=5;td.textContent="No students match these search filters.";td.style.padding="18px 8px";td.style.color="#bdb7aa";tr.appendChild(td);tbody.appendChild(tr);return;
+      }
+      filtered.forEach(a => {
+        const tr = document.createElement("tr");
+        const studentDetails=[a.passport_name||"Unnamed student",a.email||"",a.age ? a.age+" yrs" : "", "ID: "+(a.user_id||"")].filter(Boolean).join(" | ");
+        const cells = [
+          studentDetails,
+          [a.whatsapp||"",a.country||"", "Ref: "+(a.payment_reference||"none")].filter(Boolean).join(" | "),
+          a.application_status||"unknown",
+          a.payment_status||"unpaid"
+        ];
+        cells.forEach(value => { const td=document.createElement("td"); td.textContent=value; td.style.padding="10px 8px"; td.style.borderTop="1px solid #40331e"; tr.appendChild(td); });
+        const action=document.createElement("td"); action.style.padding="10px 8px"; action.style.borderTop="1px solid #40331e";
+        const approve=document.createElement("button"); approve.className="btn"; approve.textContent="Approve"; approve.type="button"; approve.disabled=String(a.application_status||"").toLowerCase()==="approved"; approve.onclick=()=>updateApplication(a.id,{application_status:"approved"});
+        const decline=document.createElement("button"); decline.className="btn outline"; decline.textContent="Decline"; decline.type="button"; decline.disabled=String(a.application_status||"").toLowerCase()==="declined"; decline.onclick=()=>updateApplication(a.id,{application_status:"declined"});
+        const paid=document.createElement("button"); paid.className="btn"; paid.textContent="Mark paid"; paid.type="button"; paid.disabled=String(a.payment_status||"").toLowerCase()==="paid"; paid.onclick=()=>{const ref=prompt("Enter verified payment receipt/reference (required):");if(ref && ref.trim()) updateApplication(a.id,{payment_status:"paid",payment_reference:ref.trim(),payment_verified_at:new Date().toISOString()});};
+        const pending=document.createElement("button"); pending.className="btn outline"; pending.textContent="Set unpaid"; pending.type="button"; pending.disabled=["unpaid","pending",""].includes(String(a.payment_status||"").toLowerCase()); pending.onclick=()=>updateApplication(a.id,{payment_status:"pending",payment_reference:null,payment_verified_at:null});
+        [approve,decline,paid,pending].forEach(b=>{b.style.padding="7px 9px";b.style.fontSize="12px";action.appendChild(b);});
+        tr.appendChild(action); tbody.appendChild(tr);
+      });
+    }
+    [searchInput,applicationFilter,paymentFilter].forEach(el=>{if(el) el.oninput=renderAdminStudents;});
+    const refreshButton=document.getElementById("adminRefreshStudents");
+    if(refreshButton) refreshButton.onclick=()=>loadAdminDashboard();
+    renderAdminStudents();
     const certBox=document.getElementById("adminCertificates"); certBox.replaceChildren();
     if (!certs.length) certBox.textContent="No certificates issued yet.";
     certs.forEach(c=>{
