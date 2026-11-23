@@ -82,6 +82,9 @@ module.exports = async function handler(req, res) {
     const paid = await supabaseRequest("/rest/v1/student_applications?payment_status=eq.paid&select=id");
     const foundingOffer = paid.length < 20;
     const amount = foundingOffer ? 10000 : 15000;
+    // Reference conversion for USD display only; the local M-Pesa rail still receives its native amount.
+    const usdKesRate = Number(env("USD_KES_REFERENCE_RATE")) || 129.97;
+    const amountUsd = Number((amount / usdKesRate).toFixed(2));
 
     const shortcode = env("MPESA_SHORTCODE");
     const passkey = env("MPESA_PASSKEY");
@@ -133,7 +136,7 @@ module.exports = async function handler(req, res) {
       })
     });
     return json(res, 200, {
-      ok: true, payment_id: id, amount_kes: amount, founding_offer: foundingOffer,
+      ok: true, payment_id: id, amount_usd: amountUsd, founding_offer: foundingOffer,
       checkout_request_id: result.CheckoutRequestID,
       message: "Check your phone and enter your M-Pesa PIN. Payment remains pending until the academy verifies the Safaricom receipt."
     });
