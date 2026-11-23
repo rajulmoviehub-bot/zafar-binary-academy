@@ -38,11 +38,24 @@ async function darajaToken() {
 }
 
 function normalizePhone(value) {
-  let phone = String(value || "").replace(/[\s()+-]/g, "");
+  let phone = String(value || "").replace(/[\\s()+-]/g, "");
   if (phone.startsWith("0")) phone = "254" + phone.slice(1);
   if (phone.startsWith("7") || phone.startsWith("1")) phone = "254" + phone;
-  if (!/^254[17]\d{8}$/.test(phone)) throw new Error("Enter a valid Kenyan Safaricom number, e.g. 0712345678 or +254712345678.");
+  if (!/^254[17]\\d{8}$/.test(phone)) throw new Error("Enter a valid Kenyan Safaricom number, e.g. 0712345678 or +254712345678.");
   return phone;
+}
+
+// Daraja timestamps must use East Africa Time, not the Vercel server's UTC clock.
+function darajaTimestamp(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Africa/Nairobi",
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(date);
+  const part = (type) => parts.find(item => item.type === type)?.value || "";
+  return part("year") + part("month") + part("day") +
+    part("hour") + part("minute") + part("second");
 }
 
 module.exports = async function handler(req, res) {
@@ -86,11 +99,7 @@ module.exports = async function handler(req, res) {
     });
 
     const { token, host } = await darajaToken();
-    const now = new Date();
-    const timestamp = now.getFullYear().toString() +
-      String(now.getMonth()+1).padStart(2,"0") + String(now.getDate()).padStart(2,"0") +
-      String(now.getHours()).padStart(2,"0") + String(now.getMinutes()).padStart(2,"0") +
-      String(now.getSeconds()).padStart(2,"0");
+    const timestamp = darajaTimestamp();
     const password = Buffer.from(shortcode + passkey + timestamp).toString("base64");
     const payload = {
       BusinessShortCode: shortcode,
