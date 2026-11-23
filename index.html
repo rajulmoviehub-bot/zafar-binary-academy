@@ -237,87 +237,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 </script>
 
 
-<script>
-/* Country-aware student experience: country choice controls local class time,
-   WhatsApp dialing guidance, and the available checkout explanation. */
-(function(){
-  const countrySelect=document.getElementById("displayCountry");
-  const registrationCountry=document.getElementById("regCountry");
-  if(!countrySelect || !registrationCountry) return;
-  const saved=(()=>{try{return localStorage.getItem("zba_student_country")||""}catch(_){return ""}})();
-  if(saved && [...countrySelect.options].some(o=>o.value===saved)){
-    countrySelect.value=saved; registrationCountry.value=saved;
-  }
-  const fees=document.getElementById("fees");
-  const info=document.createElement("div");
-  info.className="card";
-  info.style.cssText="max-width:720px;margin:18px auto;text-align:left";
-  info.innerHTML='<h3>Your country settings</h3><p id="zbaCountryLabel" class="note">Choose a country to personalise your student information.</p><p><strong>Class timetable in your local time:</strong></p><div id="zbaLocalSchedule" class="note">Select your country to convert the academy timetable.</div><p><strong>WhatsApp phone format:</strong> <span id="zbaDialCode" class="note">Choose a country to see its calling code.</span></p><p><strong>Payment availability:</strong> <span id="zbaPaymentInfo" class="note">Payment methods depend on your country.</span></p>';
-  const currencyPanel=fees.querySelector(".card");
-  if(currencyPanel) currencyPanel.insertAdjacentElement("afterend",info); else fees.appendChild(info);
-  const phone=document.getElementById("regWhatsapp");
-  const payMessage=document.querySelector("#feesPaymentFormWrap .note");
-  const countryLabel=info.querySelector("#zbaCountryLabel");
-  const scheduleNode=info.querySelector("#zbaLocalSchedule");
-  const dialNode=info.querySelector("#zbaDialCode");
-  const paymentNode=info.querySelector("#zbaPaymentInfo");
-  const classDays=[1,3,5,0]; // Monday, Wednesday, Friday, Sunday
-  const dayNames=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  function localClassRows(timeZone){
-    const now=new Date(), rows=[];
-    for(const targetDay of classDays){
-      let delta=(targetDay-now.getDay()+7)%7;
-      if(delta===0) delta=7;
-      const day=new Date(now); day.setDate(now.getDate()+delta);
-      const y=day.getFullYear(),m=day.getMonth(),d=day.getDate();
-      // 8 PM EAT = 17:00 UTC; 10 PM EAT = 19:00 UTC.
-      const start=new Date(Date.UTC(y,m,d,17,0));
-      const end=new Date(Date.UTC(y,m,d,19,0));
-      const fmt=new Intl.DateTimeFormat(undefined,{timeZone,hour:"numeric",minute:"2-digit",hour12:true});
-      const localDay=new Intl.DateTimeFormat(undefined,{timeZone,weekday:"long"}).format(start);
-      rows.push(localDay+": "+fmt.format(start)+"–"+fmt.format(end));
-    }
-    return rows.join(" · ");
-  }
-  async function applyCountry(){
-    const country=countrySelect.value;
-    registrationCountry.value=country;
-    try{localStorage.setItem("zba_student_country",country)}catch(_){}
-    if(!country){
-      countryLabel.textContent="Choose a country to personalise your student information.";
-      scheduleNode.textContent="Select your country to convert the academy timetable.";
-      dialNode.textContent="Choose a country to see its calling code.";
-      paymentNode.textContent="Payment methods depend on your country.";
-      return;
-    }
-    countryLabel.textContent="Student country: "+country+". USD remains the academy's official accounting currency; local price figures are estimates.";
-    paymentNode.textContent=country==="Kenya"
-      ?"M-Pesa checkout is currently the only configured payment method, for eligible Kenyan Safaricom numbers. International card and PayPal checkout are not active yet."
-      :"International checkout for "+country+" is not active yet. M-Pesa is currently the only configured method and requires an eligible Kenyan Safaricom number. Do not send payment until an official method for your country is published.";
-    if(phone){
-      phone.placeholder=country==="Kenya"?"0712345678 or +254712345678":"Include your international country calling code";
-      phone.setAttribute("autocomplete","tel");
-    }
-    try{
-      const response=await fetch("https://restcountries.com/v3.1/name/"+encodeURIComponent(country)+"?fields=idd,timezones");
-      if(!response.ok) throw new Error("Country details unavailable");
-      const data=await response.json(), details=data[0]||{};
-      const idd=details.idd||{};
-      const dial=idd.root ? idd.root+(idd.suffixes&&idd.suffixes.length===1?idd.suffixes[0]:"") : "";
-      dialNode.textContent=dial ? dial+" (enter the full number with this code)" : "Use your country's international calling code.";
-      const zone=(details.timezones||[])[0];
-      if(zone) scheduleNode.textContent=localClassRows(zone);
-      else scheduleNode.textContent="Local time zone is unavailable. Academy base time: Monday, Wednesday, Friday & Sunday, 8:00 PM–10:00 PM EAT (Nairobi).";
-    }catch(_){
-      dialNode.textContent="Use your country's international calling code.";
-      scheduleNode.textContent="Time-zone lookup is unavailable. Academy base time: Monday, Wednesday, Friday & Sunday, 8:00 PM–10:00 PM EAT (Nairobi).";
-    }
-  }
-  countrySelect.addEventListener("change",applyCountry);
-  registrationCountry.addEventListener("change",()=>{countrySelect.value=registrationCountry.value;applyCountry();});
-  applyCountry();
-})();
-</script>
+
 </body></html>`);
     w.document.close();
   }
@@ -606,4 +526,85 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 
 
 
+<script>
+/* Country-aware student experience: country choice controls local class time,
+   WhatsApp dialing guidance, and the available checkout explanation. */
+(function(){
+  const countrySelect=document.getElementById("displayCountry");
+  const registrationCountry=document.getElementById("regCountry");
+  if(!countrySelect || !registrationCountry) return;
+  const saved=(()=>{try{return localStorage.getItem("zba_student_country")||""}catch(_){return ""}})();
+  if(saved && [...countrySelect.options].some(o=>o.value===saved)){
+    countrySelect.value=saved; registrationCountry.value=saved;
+  }
+  const fees=document.getElementById("fees");
+  const info=document.createElement("div");
+  info.className="card";
+  info.style.cssText="max-width:720px;margin:18px auto;text-align:left";
+  info.innerHTML='<h3>Your country settings</h3><p id="zbaCountryLabel" class="note">Choose a country to personalise your student information.</p><p><strong>Class timetable in your local time:</strong></p><div id="zbaLocalSchedule" class="note">Select your country to convert the academy timetable.</div><p><strong>WhatsApp phone format:</strong> <span id="zbaDialCode" class="note">Choose a country to see its calling code.</span></p><p><strong>Payment availability:</strong> <span id="zbaPaymentInfo" class="note">Payment methods depend on your country.</span></p>';
+  const currencyPanel=fees.querySelector(".card");
+  if(currencyPanel) currencyPanel.insertAdjacentElement("afterend",info); else fees.appendChild(info);
+  const phone=document.getElementById("regWhatsapp");
+  const payMessage=document.querySelector("#feesPaymentFormWrap .note");
+  const countryLabel=info.querySelector("#zbaCountryLabel");
+  const scheduleNode=info.querySelector("#zbaLocalSchedule");
+  const dialNode=info.querySelector("#zbaDialCode");
+  const paymentNode=info.querySelector("#zbaPaymentInfo");
+  const classDays=[1,3,5,0]; // Monday, Wednesday, Friday, Sunday
+  const dayNames=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  function localClassRows(timeZone){
+    const now=new Date(), rows=[];
+    for(const targetDay of classDays){
+      let delta=(targetDay-now.getDay()+7)%7;
+      if(delta===0) delta=7;
+      const day=new Date(now); day.setDate(now.getDate()+delta);
+      const y=day.getFullYear(),m=day.getMonth(),d=day.getDate();
+      // 8 PM EAT = 17:00 UTC; 10 PM EAT = 19:00 UTC.
+      const start=new Date(Date.UTC(y,m,d,17,0));
+      const end=new Date(Date.UTC(y,m,d,19,0));
+      const fmt=new Intl.DateTimeFormat(undefined,{timeZone,hour:"numeric",minute:"2-digit",hour12:true});
+      const localDay=new Intl.DateTimeFormat(undefined,{timeZone,weekday:"long"}).format(start);
+      rows.push(localDay+": "+fmt.format(start)+"–"+fmt.format(end));
+    }
+    return rows.join(" · ");
+  }
+  async function applyCountry(){
+    const country=countrySelect.value;
+    registrationCountry.value=country;
+    try{localStorage.setItem("zba_student_country",country)}catch(_){}
+    if(!country){
+      countryLabel.textContent="Choose a country to personalise your student information.";
+      scheduleNode.textContent="Select your country to convert the academy timetable.";
+      dialNode.textContent="Choose a country to see its calling code.";
+      paymentNode.textContent="Payment methods depend on your country.";
+      return;
+    }
+    countryLabel.textContent="Student country: "+country+". USD remains the academy's official accounting currency; local price figures are estimates.";
+    paymentNode.textContent=country==="Kenya"
+      ?"M-Pesa checkout is currently the only configured payment method, for eligible Kenyan Safaricom numbers. International card and PayPal checkout are not active yet."
+      :"International checkout for "+country+" is not active yet. M-Pesa is currently the only configured method and requires an eligible Kenyan Safaricom number. Do not send payment until an official method for your country is published.";
+    if(phone){
+      phone.placeholder=country==="Kenya"?"0712345678 or +254712345678":"Include your international country calling code";
+      phone.setAttribute("autocomplete","tel");
+    }
+    try{
+      const response=await fetch("https://restcountries.com/v3.1/name/"+encodeURIComponent(country)+"?fields=idd,timezones");
+      if(!response.ok) throw new Error("Country details unavailable");
+      const data=await response.json(), details=data[0]||{};
+      const idd=details.idd||{};
+      const dial=idd.root ? idd.root+(idd.suffixes&&idd.suffixes.length===1?idd.suffixes[0]:"") : "";
+      dialNode.textContent=dial ? dial+" (enter the full number with this code)" : "Use your country's international calling code.";
+      const zone=(details.timezones||[])[0];
+      if(zone) scheduleNode.textContent=localClassRows(zone);
+      else scheduleNode.textContent="Local time zone is unavailable. Academy base time: Monday, Wednesday, Friday & Sunday, 8:00 PM–10:00 PM EAT (Nairobi).";
+    }catch(_){
+      dialNode.textContent="Use your country's international calling code.";
+      scheduleNode.textContent="Time-zone lookup is unavailable. Academy base time: Monday, Wednesday, Friday & Sunday, 8:00 PM–10:00 PM EAT (Nairobi).";
+    }
+  }
+  countrySelect.addEventListener("change",applyCountry);
+  registrationCountry.addEventListener("change",()=>{countrySelect.value=registrationCountry.value;applyCountry();});
+  applyCountry();
+})();
+</script>
 </body></html>
