@@ -401,7 +401,19 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       }
       updateAuthPanel(true, isAdmin ? "Administrator signed in. Your management dashboard is ready." : "You are signed in. Your student area is available below.");
     } catch (err) {
-      show("loginMessage", err.message || "Login failed. Check your email and password.");
+      // Authentication may already have succeeded before a student/admin data query failed.
+      // Keep the authenticated session visible and report the separate dashboard problem.
+      let activeSession = null;
+      try {
+        const sessionResult = await client.auth.getSession();
+        activeSession = sessionResult.data?.session || null;
+      } catch (_) {}
+      if (activeSession?.user) {
+        updateAuthPanel(true, "You are signed in, but your dashboard could not finish loading. Details: " + (err.message || "Please contact academy support."));
+        show("loginMessage", "Your email and password were accepted. Your account is signed in; the dashboard data needs attention. " + (err.message || ""));
+      } else {
+        show("loginMessage", err.message || "Login failed. Check your email, password, and email-confirmation status.");
+      }
     } finally {
       submit.disabled = false; submit.textContent = "LOGIN";
     }
