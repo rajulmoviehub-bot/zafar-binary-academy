@@ -33,6 +33,16 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
 .btn:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover {
   box-shadow:0 0 20px #ffd978,0 0 38px #d5ad55;
 }
+
+/* Student content deterrents: visible identity watermark and print/copy friction.
+   These controls discourage casual copying; browsers cannot prevent screenshots. */
+#studentDashboard{position:relative}
+#studentSecurityWatermark{display:none;position:fixed;inset:18% 3% auto;z-index:9999;pointer-events:none;transform:rotate(-22deg);text-align:center;color:#d5ad55;opacity:.19;font-size:clamp(15px,3vw,28px);font-weight:900;letter-spacing:2px;text-shadow:0 1px 2px #000;line-height:2.2;overflow-wrap:anywhere}
+#studentDashboard[style*="display: block"] #studentSecurityWatermark{display:block}
+#studentProtectionNotice{border:1px solid #9b762d;background:#191307;color:#f0d99e;padding:12px;border-radius:7px;margin:12px auto;max-width:720px}
+#studentDashboard .protected-content{-webkit-user-select:none;user-select:none}
+#studentDashboard input,#studentDashboard textarea{-webkit-user-select:text;user-select:text}
+@media print{#studentDashboard{display:none!important}}
 </style>
 </head>
 <body>
@@ -85,7 +95,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
 <section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><p class="note">Sign in using the email address and password you registered with.</p><form id="loginForm"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Your registered email" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button><p id="loginMessage" class="note" role="status"></p></form><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
 <div class="center" style="padding:10px"><p id="authStatusMessage" class="note" role="status" style="display:none"></p><button class="btn outline" id="logoutBtn" type="button" style="display:none">LOG OUT</button></div>
 
-<section id="studentDashboard" style="display:none"><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div id="disciplineNotice" class="warning" role="status" aria-live="polite" style="display:none;max-width:720px;margin:0 auto 16px"></div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Country:</strong> <span id="studentCountry">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><div id="studentExams" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Examinations</h3><p class="note">Download published exam papers, complete your work and upload your answers for marking.</p><div id="studentExamList" class="note">Loading examinations...</div></div><div id="studentClassDetails" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Class access</h3><p><strong>Timetable:</strong> <span id="studentClassSchedule">Not published yet</span></p><p><a id="studentZoomLink" target="_blank" rel="noopener" style="display:none">Open Zoom class</a></p><p><a id="studentWhatsAppLink" target="_blank" rel="noopener" style="display:none">Join private WhatsApp group</a></p></div></div></section>
+<section id="studentDashboard" style="display:none"><div id="studentSecurityWatermark" aria-hidden="true"></div><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div id="disciplineNotice" class="warning" role="status" aria-live="polite" style="display:none;max-width:720px;margin:0 auto 16px"></div><div id="studentProtectionNotice" style="display:none" role="note">⚠️ PERSONAL LEARNING ACCESS — Materials are licensed to the signed-in student. Do not share accounts, copy, record, photograph, redistribute or resell lessons, exam papers or marked work. Your name and account details are watermarked on protected study files. Access may be reviewed after verified misuse. Screenshots cannot be reliably blocked by a website.</div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Country:</strong> <span id="studentCountry">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><div id="studentExams" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Examinations</h3><p class="note">Download published exam papers, complete your work and upload your answers for marking.</p><div id="studentExamList" class="note">Loading examinations...</div></div><div id="studentClassDetails" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Class access</h3><p><strong>Timetable:</strong> <span id="studentClassSchedule">Not published yet</span></p><p><a id="studentZoomLink" target="_blank" rel="noopener" style="display:none">Open Zoom class</a></p><p><a id="studentWhatsAppLink" target="_blank" rel="noopener" style="display:none">Join private WhatsApp group</a></p></div></div></section>
 <section id="certificateVerify"><div class="center"><h2>Certificate Verification</h2><p>Check an academy certificate number.</p></div><div class="card" style="max-width:560px;margin:auto"><form id="verifyCertificateForm"><label>Certificate number</label><input id="verifyCertificateNumber" required placeholder="ZBA-2026-XXXXXXXX"><button class="btn" type="submit">VERIFY CERTIFICATE</button></form><p id="verifyCertificateMessage" class="note" role="status"></p></div></section>
 <section id="admin"><div class="center"><h2>Academy Admin Panel</h2><p>Secure administrator workspace</p><span class="pill">ADMIN ACCESS</span></div>
 <div class="grid"><div class="grid"><div class="card"><div class="stat" id="adminStudentCount">—</div><p>Student applications</p></div><div class="card"><div class="stat" id="adminPendingCount">—</div><p>Pending applications</p></div><div class="card"><div class="stat" id="adminPaidCount">—</div><p>Payment records marked paid</p></div><div class="card"><div class="stat" id="adminCertificateCount">—</div><p>Certificates issued</p></div></div>
@@ -151,6 +161,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
   renderSim();
 })();
 </script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
@@ -159,6 +170,107 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_e2nUv2WnEyEvroA68ByXmw_55SajdIA";
   const client = window.supabase?.createClient ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
   const show = (id, message) => { const el = document.getElementById(id); if (el) el.textContent = message; };
+  let activeStudentUserId = "";
+  let studentTabToken = "";
+  try {
+    studentTabToken = sessionStorage.getItem("zba_student_tab_token") || (Date.now().toString(36)+"-"+Math.random().toString(36).slice(2));
+    sessionStorage.setItem("zba_student_tab_token",studentTabToken);
+  } catch (_) { studentTabToken = "tab-"+Date.now(); }
+  const studentSessionKey = "zba_active_student_tab";
+  function claimStudentTab(user) {
+    if(!user || user.email?.toLowerCase()==="rajulmoviehub@gmail.com") return;
+    activeStudentUserId=user.id;
+    try {
+      localStorage.setItem(studentSessionKey,JSON.stringify({userId:user.id,token:studentTabToken,at:Date.now()}));
+      const notice=document.getElementById("studentProtectionNotice");
+      if(notice){notice.style.display="block";notice.textContent="⚠️ PERSONAL ACCOUNT PROTECTION — This student account is active in this browser tab. Signing in on another tab in this same browser signs out the earlier tab. Other devices may still be able to sign in; full cross-device session enforcement requires server-side authentication controls.";}
+    } catch (_) {}
+  }
+  window.addEventListener("storage",async event=>{
+    if(event.key!==studentSessionKey || !activeStudentUserId || !event.newValue) return;
+    try {
+      const current=JSON.parse(event.newValue);
+      if(current.userId===activeStudentUserId && current.token!==studentTabToken){
+        await client.auth.signOut();
+        activeStudentUserId="";
+        const dashboard=document.getElementById("studentDashboard");
+        if(dashboard) dashboard.style.display="none";
+        updateAuthPanel(false,"This student account was opened in another tab in this browser. Please sign in again here.");
+        show("loginMessage","For account protection, only one active tab per student account is allowed in this browser.");
+      }
+    } catch (_) {}
+  });
+  async function renderStudentProtection(user,application){
+    const name=application?.passport_name||user.user_metadata?.full_name||"Student";
+    const email=user.email||"";
+    const id=String(user.id||"").slice(0,12);
+    const stamp="ZAFAR BINARY ACADEMY • "+name+" • "+email+" • STUDENT "+id;
+    const mark=document.getElementById("studentSecurityWatermark");
+    if(mark) mark.textContent=stamp+"\n"+stamp;
+    const notice=document.getElementById("studentProtectionNotice");
+    if(notice) notice.style.display="block";
+    const dashboard=document.getElementById("studentDashboard");
+    if(dashboard) dashboard.classList.add("protected-content");
+    claimStudentTab(user);
+  }
+  async function openWatermarkedStudentFile(path,user){
+    const popup=window.open("about:blank","_blank");
+    try{
+      const signedUrl=await signedExamLink(path);
+      const response=await fetch(signedUrl);
+      if(!response.ok) throw new Error("Protected file could not be retrieved.");
+      const sourceBlob=await response.blob();
+      const identity=(user.user_metadata?.full_name||"Student")+" • "+(user.email||"")+" • "+String(user.id||"").slice(0,12);
+      let outputBlob;
+      if(sourceBlob.type==="application/pdf" || /\.pdf$/i.test(path)){
+        if(!window.PDFLib) throw new Error("The secure PDF watermark service did not load. Please try again later.");
+        const {PDFDocument,StandardFonts,rgb,degrees}=window.PDFLib;
+        const pdf=await PDFDocument.load(await sourceBlob.arrayBuffer());
+        const font=await pdf.embedFont(StandardFonts.HelveticaBold);
+        for(const page of pdf.getPages()){
+          const size=page.getSize();
+          const label="ZAFAR BINARY ACADEMY • COPY FOR "+identity;
+          for(const y of [size.height*.28,size.height*.58]){
+            page.drawText(label,{x:18,y,font,size:Math.max(10,Math.min(19,size.width/38)),color:rgb(.72,.12,.12),opacity:.24,rotate:degrees(28),maxWidth:size.width*1.3});
+          }
+        }
+        outputBlob=new Blob([await pdf.save()],{type:"application/pdf"});
+      }else if(/^image\//.test(sourceBlob.type) || /\.(png|jpe?g)$/i.test(path)){
+        const objectUrl=URL.createObjectURL(sourceBlob);
+        const imageElement=new Image();
+        await new Promise((resolve,reject)=>{imageElement.onload=resolve;imageElement.onerror=reject;imageElement.src=objectUrl;});
+        const canvas=document.createElement("canvas");
+        canvas.width=imageElement.naturalWidth;canvas.height=imageElement.naturalHeight;
+        const ctx=canvas.getContext("2d");ctx.drawImage(imageElement,0,0);
+        ctx.save();ctx.globalAlpha=.32;ctx.fillStyle="#b51f2b";ctx.font="bold "+Math.max(18,Math.round(canvas.width/38))+"px Arial";ctx.translate(canvas.width/2,canvas.height/2);ctx.rotate(-Math.PI/7);
+        for(let y=-canvas.height;y<canvas.height*1.5;y+=Math.max(90,canvas.height/3))ctx.fillText("ZAFAR ACADEMY • "+identity,-canvas.width,y);
+        ctx.restore();URL.revokeObjectURL(objectUrl);
+        outputBlob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png"));
+        if(!outputBlob)throw new Error("Could not watermark this image.");
+      }else throw new Error("This file type is not supported by protected viewing.");
+      const protectedUrl=URL.createObjectURL(outputBlob);
+      if(popup && !popup.closed){popup.location.href=protectedUrl;}
+      else{
+        const link=document.createElement("a");link.href=protectedUrl;link.download=(path.split("/").pop()||"academy-paper").replace(/\.(pdf|jpe?g|png)$/i,"")+(outputBlob.type==="application/pdf"?"-watermarked.pdf":"-watermarked.png");
+        document.body.appendChild(link);link.click();link.remove();
+      }
+      setTimeout(()=>URL.revokeObjectURL(protectedUrl),10*60*1000);
+    }catch(error){
+      if(popup && !popup.closed)popup.close();
+      alert((error.message||"Could not open protected file.")+" The original unwatermarked file was not opened.");
+    }
+  }
+  document.addEventListener("contextmenu",event=>{
+    if(event.target.closest("#studentDashboard")) event.preventDefault();
+  });
+  document.addEventListener("copy",event=>{
+    if(event.target.closest("#studentDashboard")){event.preventDefault();show("studentProtectionNotice","Copying protected student-area content is disabled. Please use your own notes; do not redistribute academy materials.");}
+  });
+  document.addEventListener("keydown",event=>{
+    if(!event.target.closest("#studentDashboard"))return;
+    const key=String(event.key||"").toLowerCase();
+    if((event.ctrlKey||event.metaKey)&&["p","s","u"].includes(key)){event.preventDefault();show("studentProtectionNotice","Printing, saving the page and viewing source are restricted in the student area. Screenshots and external recording cannot be reliably blocked.");}
+  });
    async function recordRuleEvent(code,details){
      try{const {data,error}=await client.rpc("record_academy_rule_event",{p_event_code:code,p_details:details||""});if(error||!data)return;
        const n=document.getElementById("disciplineNotice");if(!n)return;n.style.display="block";
@@ -353,7 +465,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
       const content=document.createElement("pre");content.style.cssText="white-space:pre-wrap;color:#eee;font:inherit;background:#101010;padding:12px;border-radius:6px";content.textContent=exam.content||"See attached PDF paper.";
       card.append(heading,deadline,content);
       if(exam.file_path){
-        const download=document.createElement("button");download.type="button";download.className="btn outline";download.textContent="DOWNLOAD EXAM PDF";download.onclick=async()=>{try{const url=await signedExamLink(exam.file_path);window.open(url,"_blank","noopener");}catch(e){alert(e.message||"Could not download exam.");}};card.appendChild(download);
+        const download=document.createElement("button");download.type="button";download.className="btn outline";download.textContent="DOWNLOAD EXAM PDF";download.onclick=()=>openWatermarkedStudentFile(exam.file_path,user);card.appendChild(download);
       }
       const prior=submissions.find(x=>x.exam_id===exam.id);
       if(prior){
@@ -398,7 +510,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
       const row=document.createElement("div");row.style.cssText="border-top:1px solid #40331e;padding:12px 0";
       const name=document.createElement("strong");name.textContent=(paper.student_name||"Student")+" — "+(paper.exam_title||"Examination");
       const result=document.createElement("p");result.className="note";result.textContent="Score: "+(paper.score||"Marked")+" · Feedback: "+(paper.feedback||"No feedback provided")+" · Marked: "+examDate(paper.marked_at);
-      const open=document.createElement("button");open.type="button";open.className="btn outline";open.textContent="VIEW MARKED PAPER";open.onclick=async()=>{try{const url=await signedExamLink(paper.file_path);window.open(url,"_blank","noopener");}catch(e){alert(e.message||"Could not open marked paper.");}};
+      const open=document.createElement("button");open.type="button";open.className="btn outline";open.textContent="VIEW MARKED PAPER";open.onclick=()=>openWatermarkedStudentFile(paper.file_path,user);
       row.append(name,result,open);shared.appendChild(row);
     }
     list.appendChild(shared);
@@ -616,6 +728,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
         if(applicationError) throw applicationError;
         if(application) {
           document.getElementById("studentDashboard").style.display="block";
+          await renderStudentProtection(user,application);
           await loadStudentExams(user);
        await loadRuleNotice();
           document.getElementById("feesPaymentLocked").style.display="none";
@@ -682,6 +795,8 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
     document.getElementById("adminWorkspace").style.display = "none";
     document.getElementById("adminLocked").style.display = "block";
     document.getElementById("studentDashboard").style.display = "none";
+    if(activeStudentUserId){try{const held=JSON.parse(localStorage.getItem(studentSessionKey)||"null");if(held?.token===studentTabToken)localStorage.removeItem(studentSessionKey);}catch(_){}}
+    activeStudentUserId="";
     document.getElementById("feesPaymentFormWrap").style.display = "none";
     document.getElementById("feesPaymentLocked").style.display = "block";
 
@@ -732,6 +847,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
       document.getElementById("feesPaymentLocked").style.display = "none";
       document.getElementById("feesPaymentFormWrap").style.display = "block";
       document.getElementById("studentDashboard").style.display = "block";
+      await renderStudentProtection(user,application);
       await loadStudentExams(user);
        await loadRuleNotice();
       document.getElementById("studentApplicationStatus").textContent = application.application_status || "pending";
