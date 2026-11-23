@@ -44,7 +44,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <div class="card center"><h3>Standard Membership</h3><div class="price">$50</div><p>Full course fee</p><p class="note" id="standardKes">Kenyan estimate: loading exchange rate…</p><p class="note">Online lessons, practice education and final assessment.</p><a class="btn" href="#feesPaymentPanel">CONTINUE TO PAYMENT</a></div></div>
 <div id="feesPaymentPanel" class="card" style="max-width:720px;margin:24px auto 0">
 <h3>Course Fee Payment — M-Pesa</h3>
-<p id="feesPaymentLocked" class="warning">Register for the course and log in first. After login, return to this Fees section to pay. Payment is available only here.</p>
+<div id="feesPaymentLocked" class="warning"><p>Register for the course and log in first. After login, return to this Fees section to pay. Payment is available only here.</p><a class="btn outline" href="#login" style="display:inline-block;margin-top:10px">LOG IN TO UNLOCK M-PESA</a></div>
 <div id="feesPaymentFormWrap" style="display:none">
 <p class="note">Your applicable course fee is selected securely by the academy server. Enter your Safaricom number to receive an M-Pesa STK Push. Your enrolment remains pending until the academy verifies the payment against its M-Pesa statement.</p>
 <form id="studentMpesaForm">
@@ -370,7 +370,10 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
           }
           show("loginMessage","Welcome. Your student dashboard is ready below.");
         } else {
-          show("loginMessage","Signed in. Your account is active, but no student application was found. Contact academy support.");
+          document.getElementById("feesPaymentLocked").style.display="block";
+          document.getElementById("feesPaymentFormWrap").style.display="none";
+          document.getElementById("feesPaymentLocked").innerHTML='<p>Your login is active, but we could not find a course application for this account. Please contact academy support at <a href="mailto:rajulmoviehub@gmail.com">rajulmoviehub@gmail.com</a> so the application can be checked. Payment stays locked until the application is found.</p><a class="btn outline" href="#register" style="display:inline-block;margin-top:10px">RETURN TO REGISTRATION</a>';
+          show("loginMessage","You are signed in, but no course application was found. Payment has not been enabled.");
         }
       }
       document.getElementById("logoutBtn").style.display = "inline-block";
