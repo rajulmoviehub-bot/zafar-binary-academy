@@ -58,7 +58,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 <p class="center note">M-Pesa is the only checkout method currently being prepared. Do not send money through unofficial links. A payment request is not proof of successful payment.</p></section>
 
 <section><div class="split"><img class="feature-img" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=85" alt="Students learning together"><div><h2>Learn Online. Graduate With Confidence.</h2><p>Live online classes run Monday, Wednesday, Friday and Sunday from 8:00 PM to 10:00 PM East Africa Time (Nairobi). Zoom and the private WhatsApp group invitation are visible only to approved students whose payments are verified.</p><p>Students who complete the course and pass the assessment can receive an academy-issued certificate of completion.</p></div></div>
-<div class="card center" style="margin-top:25px"><h2>Graduation Bonus</h2><h3>Enhanced Auto V6 Binary Bot</h3><p>Graduates are intended to receive the bot free, subject to development and activation. Standalone offer: $223.13; availability and licensing are not active.</p></div></section>
+<div class="card center" style="margin-top:25px"><h2>Graduation Bonus</h2><h3>Enhanced Auto V6 Binary Bot</h3><p>Graduates are intended to receive the bot free, subject to development and activation. Standalone offer: <span class="price">$223.13</span>; availability and licensing are not active.</p></div></section>
 
 <section id="register"><div class="center"><h2>Student Registration</h2><p>Create your secure student account and submit your course application.</p></div><div class="card">
 <div class="warning">Use your real details only on this secure academy website. You must be 18 or older. Email confirmation may be required before you can log in.</div>
@@ -375,7 +375,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
             }
             if(settings) {
               document.getElementById("studentClassDetails").style.display="block";
-              document.getElementById("studentClassSchedule").textContent=settings.class_schedule||"Timetable not published.";
+              document.getElementById("studentClassSchedule").textContent=window.zbaGetLocalClassSchedule?window.zbaGetLocalClassSchedule():(settings.class_schedule||"Timetable not published.");
               const zoom=document.getElementById("studentZoomLink"),group=document.getElementById("studentWhatsAppLink");
               if(settings.zoom_meeting_url){zoom.href=settings.zoom_meeting_url;zoom.style.display="inline-block";}
               if(settings.whatsapp_group_url){group.href=settings.whatsapp_group_url;group.style.display="inline-block";}
@@ -684,6 +684,9 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
   languageSelect.value=(storedLanguage==="sw"||storedLanguage==="en")?storedLanguage:suggestedLanguage;
   languageSelect.addEventListener("change",applyLanguage);
   applyLanguage();
+  window.zbaGetLocalClassSchedule=function(){
+    return zoneSelect.value ? localClassRows(zoneSelect.value) : "Monday, Wednesday, Friday & Sunday | 8:00 PM–10:00 PM EAT (Nairobi)";
+  };
   window.zbaSetStudentCountry=function(country){
     if(country && [...countrySelect.options].some(o=>o.value===country)){
       countrySelect.value=country;
