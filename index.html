@@ -393,6 +393,61 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     document.getElementById("studentDashboard").style.display = "none";
     document.getElementById("feesPaymentFormWrap").style.display = "none";
     document.getElementById("feesPaymentLocked").style.display = "block";
+
+  // Restore student Fees access when a logged-in student returns or refreshes the page.
+  (async function restoreStudentSession() {
+    try {
+      const {data: sessionData, error: sessionError} = await client.auth.getSession();
+      if (sessionError || !sessionData.session?.user) return;
+      const user = sessionData.session.user;
+      if (user.email?.toLowerCase() === "rajulmoviehub@gmail.com") return;
+      let {data: application, error: applicationError} = await client
+        .from("student_applications")
+        .select("application_status,payment_status,course")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (applicationError) throw applicationError;
+      if (!application) {
+        const meta = user.user_metadata || {};
+        const age = Number(meta.age || 0);
+        if (meta.full_name && age >= 18 && meta.whatsapp) {
+          const {error: insertError} = await client.from("student_applications").insert({
+            user_id: user.id,
+            passport_name: meta.full_name,
+            age,
+            whatsapp: meta.whatsapp,
+            country: meta.country || ""
+          });
+          if (insertError && !/duplicate|unique/i.test(insertError.message || "")) throw insertError;
+          const refreshed = await client.from("student_applications")
+            .select("application_status,payment_status,course")
+            .eq("user_id", user.id).maybeSingle();
+          if (refreshed.error) throw refreshed.error;
+          application = refreshed.data;
+        }
+      }
+      if (!application) {
+        const locked = document.getElementById("feesPaymentLocked");
+        if (locked) locked.style.display = "block";
+        return;
+      }
+      document.getElementById("feesPaymentLocked").style.display = "none";
+      document.getElementById("feesPaymentFormWrap").style.display = "block";
+      document.getElementById("studentDashboard").style.display = "block";
+      document.getElementById("studentApplicationStatus").textContent = application.application_status || "pending";
+      document.getElementById("studentPaymentStatus").textContent = application.payment_status || "unpaid";
+      document.getElementById("studentCourseName").textContent = application.course || "Full Binary Trading Course";
+      document.getElementById("studentNextStep").textContent =
+        application.payment_status === "paid"
+          ? "Your payment is recorded. Await academy approval if your application is still pending."
+          : "Return to the Fees section to request your course payment with M-Pesa.";
+      document.getElementById("logoutBtn").style.display = "inline-block";
+    } catch (err) {
+      console.error("Could not restore student Fees access:", err);
+      const message = document.getElementById("loginMessage");
+      if (message) message.textContent = "Your session is active, but student details could not be loaded. Please contact academy support.";
+    }
+  })();
   });
 })();
 </script>
