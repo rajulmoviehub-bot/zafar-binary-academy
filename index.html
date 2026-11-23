@@ -543,7 +543,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
   const info=document.createElement("div");
   info.className="card";
   info.style.cssText="max-width:720px;margin:18px auto;text-align:left";
-  info.innerHTML='<h3>Your country settings</h3><p id="zbaCountryLabel" class="note">Choose a country to personalise your student information.</p><p><strong>Class timetable in your local time:</strong></p><div id="zbaLocalSchedule" class="note">Select your country to convert the academy timetable.</div><p><strong>WhatsApp phone format:</strong> <span id="zbaDialCode" class="note">Choose a country to see its calling code.</span></p><p><strong>Payment availability:</strong> <span id="zbaPaymentInfo" class="note">Payment methods depend on your country.</span></p>';
+  info.innerHTML='<h3>Your country settings</h3><p id="zbaCountryLabel" class="note">Choose a country to personalise your student information.</p><label for="zbaTimeZone">Your time zone (choose your region if your country has several)</label><select id="zbaTimeZone"></select><p><strong>Class timetable in your selected time zone:</strong></p><div id="zbaLocalSchedule" class="note">Select your country to convert the academy timetable.</div><p><strong>WhatsApp phone format:</strong> <span id="zbaDialCode" class="note">Choose a country to see its calling code.</span></p><p><strong>Payment availability:</strong> <span id="zbaPaymentInfo" class="note">Payment methods depend on your country.</span></p><p class="note">Website language: English. Kiswahili support is being prepared; other languages are not yet fully translated.</p>';
   const currencyPanel=fees.querySelector(".card");
   if(currencyPanel) currencyPanel.insertAdjacentElement("afterend",info); else fees.appendChild(info);
   const phone=document.getElementById("regWhatsapp");
@@ -552,6 +552,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
   const scheduleNode=info.querySelector("#zbaLocalSchedule");
   const dialNode=info.querySelector("#zbaDialCode");
   const paymentNode=info.querySelector("#zbaPaymentInfo");
+  const zoneSelect=info.querySelector("#zbaTimeZone");
   const classDays=[1,3,5,0]; // Monday, Wednesday, Friday, Sunday
   const dayNames=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   function localClassRows(timeZone){
@@ -600,14 +601,28 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       const idd=details.idd||{};
       const dial=idd.root ? idd.root+(idd.suffixes&&idd.suffixes.length===1?idd.suffixes[0]:"") : "";
       dialNode.textContent=dial ? dial+" (enter the full number with this code)" : "Use your country's international calling code.";
-      const zone=(details.timezones||[])[0];
-      if(zone) scheduleNode.textContent=localClassRows(zone);
+      const zones=details.timezones||[];
+      zoneSelect.replaceChildren();
+      zones.forEach(zone=>{
+        const option=document.createElement("option");
+        option.value=zone; option.textContent=zone.replaceAll("_"," ");
+        zoneSelect.appendChild(option);
+      });
+      let preferred="";
+      try{preferred=localStorage.getItem("zba_student_timezone")||""}catch(_){}
+      const browserZone=Intl.DateTimeFormat().resolvedOptions().timeZone||"";
+      zoneSelect.value=zones.includes(preferred)?preferred:(zones.includes(browserZone)?browserZone:(zones[0]||""));
+      if(zoneSelect.value) scheduleNode.textContent=localClassRows(zoneSelect.value);
       else scheduleNode.textContent="Local time zone is unavailable. Academy base time: Monday, Wednesday, Friday & Sunday, 8:00 PM–10:00 PM EAT (Nairobi).";
     }catch(_){
       dialNode.textContent="Use your country's international calling code.";
       scheduleNode.textContent="Time-zone lookup is unavailable. Academy base time: Monday, Wednesday, Friday & Sunday, 8:00 PM–10:00 PM EAT (Nairobi).";
     }
   }
+  zoneSelect.addEventListener("change",()=>{
+    try{localStorage.setItem("zba_student_timezone",zoneSelect.value)}catch(_){}
+    if(zoneSelect.value) scheduleNode.textContent=localClassRows(zoneSelect.value);
+  });
   countrySelect.addEventListener("change",applyCountry);
   registrationCountry.addEventListener("change",()=>{countrySelect.value=registrationCountry.value;applyCountry();});
   applyCountry();
