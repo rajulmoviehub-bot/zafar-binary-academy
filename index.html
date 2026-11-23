@@ -69,7 +69,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 
 <section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><p class="note">Sign in using the email address and password you registered with.</p><form id="loginForm"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Your registered email" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button><p id="loginMessage" class="note" role="status"></p></form><button class="btn outline" id="logoutBtn" type="button" style="display:none">LOG OUT</button><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
 
-<section id="studentDashboard" style="display:none"><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><div id="studentClassDetails" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Class access</h3><p><strong>Timetable:</strong> <span id="studentClassSchedule">Not published yet</span></p><p><a id="studentZoomLink" target="_blank" rel="noopener" style="display:none">Open Zoom class</a></p><p><a id="studentWhatsAppLink" target="_blank" rel="noopener" style="display:none">Join private WhatsApp group</a></p></div></div></section>
+<section id="studentDashboard" style="display:none"><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Country:</strong> <span id="studentCountry">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><div id="studentClassDetails" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Class access</h3><p><strong>Timetable:</strong> <span id="studentClassSchedule">Not published yet</span></p><p><a id="studentZoomLink" target="_blank" rel="noopener" style="display:none">Open Zoom class</a></p><p><a id="studentWhatsAppLink" target="_blank" rel="noopener" style="display:none">Join private WhatsApp group</a></p></div></div></section>
 <section id="certificateVerify"><div class="center"><h2>Certificate Verification</h2><p>Check an academy certificate number.</p></div><div class="card" style="max-width:560px;margin:auto"><form id="verifyCertificateForm"><label>Certificate number</label><input id="verifyCertificateNumber" required placeholder="ZBA-2026-XXXXXXXX"><button class="btn" type="submit">VERIFY CERTIFICATE</button></form><p id="verifyCertificateMessage" class="note" role="status"></p></div></section>
 <section id="admin"><div class="center"><h2>Academy Admin Panel</h2><p>Secure administrator workspace</p><span class="pill">ADMIN ACCESS</span></div>
 <div class="grid"><div class="grid"><div class="card"><div class="stat" id="adminStudentCount">—</div><p>Student applications</p></div><div class="card"><div class="stat" id="adminPendingCount">—</div><p>Pending applications</p></div><div class="card"><div class="stat" id="adminPaidCount">—</div><p>Payment records marked paid</p></div><div class="card"><div class="stat" id="adminCertificateCount">—</div><p>Certificates issued</p></div></div>
@@ -348,7 +348,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
             if(appError) throw appError;
           }
         }
-        const {data:application,error:applicationError}=await client.from("student_applications").select("application_status,payment_status,course").eq("user_id",user.id).maybeSingle();
+        const {data:application,error:applicationError}=await client.from("student_applications").select("application_status,payment_status,course,country").eq("user_id",user.id).maybeSingle();
         if(applicationError) throw applicationError;
         if(application) {
           document.getElementById("studentDashboard").style.display="block";
@@ -357,10 +357,17 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
           document.getElementById("studentApplicationStatus").textContent=application.application_status;
           document.getElementById("studentPaymentStatus").textContent=application.payment_status;
           document.getElementById("studentCourseName").textContent=application.course;
+          const studentCountry=application.country||meta.country||"";
+          document.getElementById("studentCountry").textContent=studentCountry||"Not provided";
+          if(window.zbaSetStudentCountry) window.zbaSetStudentCountry(studentCountry);
+          const mpesaAllowed=studentCountry==="Kenya";
+          document.getElementById("feesPaymentFormWrap").style.display=mpesaAllowed?"block":"none";
           const eligible=application.payment_status==="paid" && application.application_status==="approved";
           document.getElementById("studentNextStep").textContent=eligible
             ? "Your enrolment is approved. Your private class details are shown below."
-            : application.payment_status==="paid" ? "Your payment is recorded. Await application approval." : "Open the Fees section to request your course payment with M-Pesa.";
+            : application.payment_status==="paid" ? "Your payment is recorded. Await application approval."
+            : mpesaAllowed ? "Open the Fees section to request your course payment with M-Pesa."
+            : "International checkout is not active for "+(studentCountry||"your country")+" yet. Please wait for an official payment option; do not send money unofficially.";
           if(eligible) {
             const {data:settings,error:settingsError}=await client.from("academy_class_settings").select("*").eq("id",true).maybeSingle();
             if(settingsError) {
@@ -445,10 +452,17 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       document.getElementById("studentApplicationStatus").textContent = application.application_status || "pending";
       document.getElementById("studentPaymentStatus").textContent = application.payment_status || "unpaid";
       document.getElementById("studentCourseName").textContent = application.course || "Full Binary Trading Course";
+      const studentCountry=application.country||user.user_metadata?.country||"";
+      document.getElementById("studentCountry").textContent=studentCountry||"Not provided";
+      if(window.zbaSetStudentCountry) window.zbaSetStudentCountry(studentCountry);
+      const mpesaAllowed=studentCountry==="Kenya";
+      document.getElementById("feesPaymentFormWrap").style.display=mpesaAllowed?"block":"none";
       document.getElementById("studentNextStep").textContent =
         application.payment_status === "paid"
           ? "Your payment is recorded. Await academy approval if your application is still pending."
-          : "Return to the Fees section to request your course payment with M-Pesa.";
+          : mpesaAllowed
+            ? "Return to the Fees section to request your course payment with M-Pesa."
+            : "International checkout is not active for "+(studentCountry||"your country")+" yet. Please wait for an official payment option; do not send money unofficially.";
       document.getElementById("logoutBtn").style.display = "inline-block";
     } catch (err) {
       console.error("Could not restore student Fees access:", err);
@@ -623,6 +637,13 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     try{localStorage.setItem("zba_student_timezone",zoneSelect.value)}catch(_){}
     if(zoneSelect.value) scheduleNode.textContent=localClassRows(zoneSelect.value);
   });
+  window.zbaSetStudentCountry=function(country){
+    if(country && [...countrySelect.options].some(o=>o.value===country)){
+      countrySelect.value=country;
+      registrationCountry.value=country;
+      applyCountry();
+    }
+  };
   countrySelect.addEventListener("change",applyCountry);
   registrationCountry.addEventListener("change",()=>{countrySelect.value=registrationCountry.value;applyCountry();});
   applyCountry();
