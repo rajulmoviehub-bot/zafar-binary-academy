@@ -458,6 +458,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       if (!application) {
         const locked = document.getElementById("feesPaymentLocked");
         if (locked) locked.style.display = "block";
+        updateAuthPanel(true, "You are signed in, but no course application was found. Contact academy support for help.");
         return;
       }
       document.getElementById("feesPaymentLocked").style.display = "none";
