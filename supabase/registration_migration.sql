@@ -65,8 +65,7 @@ create table if not exists public.academy_payment_intents (
   user_id uuid not null references auth.users(id) on delete restrict,
   application_id uuid not null references public.student_applications(id) on delete restrict,
   amount_kes integer not null check (amount_kes > 0),
-  usd_amount integer not null check (usd_amount in (25,50)),
-  exchange_rate numeric(14,6) not null check (exchange_rate > 0),
+  fee_amount_kes integer not null check (fee_amount_kes in (10000,15000)),
   phone text not null,
   status text not null default 'initiating'
     check (status in ('initiating','stk_sent','callback_received','failed','review_required')),
