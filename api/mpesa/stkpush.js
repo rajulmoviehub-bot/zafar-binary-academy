@@ -74,9 +74,10 @@ module.exports = async function handler(req, res) {
     if (!userResponse.ok || !user.id || !user.email_confirmed_at) return json(res, 401, { error: "Please confirm your email and sign in again." });
 
     const phone = normalizePhone(req.body && req.body.phone);
-    const applications = await supabaseRequest("/rest/v1/student_applications?user_id=eq." + encodeURIComponent(user.id) + "&select=id,payment_status,application_status");
+    const applications = await supabaseRequest("/rest/v1/student_applications?user_id=eq." + encodeURIComponent(user.id) + "&select=id,payment_status,application_status,country");
     const application = applications[0];
     if (!application) return json(res, 400, { error: "Your student application was not found. Please complete registration and sign in again." });
+    if (application.country !== "Kenya") return json(res, 403, { error: "M-Pesa checkout is currently available only to students registered in Kenya. Please wait for an official payment method for your country." });
     if (application.payment_status === "paid") return json(res, 409, { error: "Your course payment is already recorded." });
 
     const paid = await supabaseRequest("/rest/v1/student_applications?payment_status=eq.paid&select=id");
