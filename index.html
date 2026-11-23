@@ -169,72 +169,7 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     </style></head><body><main class="sheet"><div class="academy">ZAFAR BINARY ACADEMY</div><div class="sub">CERTIFICATE OF COMPLETION</div><p>This is proudly presented to</p><div class="name">${safe(c.student_name)}</div><div class="line"></div><p>for successfully completing the course</p><h2>${safe(c.course)}</h2><p>and meeting the academy's course completion requirements.</p><div class="seal">ZAFAR BINARY ACADEMY<br>PMK • EST. 2026<br>FOUNDER & DIRECTOR</div><div class="signature">PMK</div><div class="small">Paul M K · Founder &amp; Director</div><div class="number">Certificate No: ${safe(c.certificate_number)} · Issued: ${safe(c.issued_at)}<br>This is an academy-issued certificate, not an externally accredited qualification.</div></main><script>window.onload=()=>window.print();<\/script>
 <script src="/auto-v6.js" defer></script>
 
-<script>
-/* Country-based display conversion. USD remains the academy's base price. */
-(function(){
-  const fees=document.getElementById("fees");
-  const registrationCountry=document.getElementById("regCountry");
-  if(!fees || !registrationCountry) return;
-  const panel=document.createElement("div");
-  panel.className="card";
-  panel.style.cssText="max-width:720px;margin:20px auto;text-align:left";
-  panel.innerHTML='<h3>Choose your country and view local currency</h3><label for="displayCountry">Your country</label><select id="displayCountry" aria-label="Choose your country"></select><p id="currencyStatus" class="note" role="status">Select your country to view an estimated local-currency equivalent. Official course prices remain in USD.</p>';
-  const grid=fees.querySelector(".grid");
-  if(grid) fees.insertBefore(panel,grid);
-  const countrySelect=panel.querySelector("#displayCountry");
-  countrySelect.innerHTML=registrationCountry.innerHTML;
-  countrySelect.value=registrationCountry.value;
-  if(!countrySelect.value){
-    const region=(navigator.language||"").split("-")[1];
-    if(region){
-      try{
-        const countryName=new Intl.DisplayNames(["en"],{type:"region"}).of(region.toUpperCase());
-        const option=[...countrySelect.options].find(o=>o.text.trim().toLowerCase()===String(countryName).toLowerCase());
-        if(option) countrySelect.value=option.value;
-      }catch(_){}
-    }
-  }
-  const prices=[...fees.querySelectorAll(".price")].filter(el=>/^\$\s*[\d,.]+$/.test(el.textContent.trim()));
-  const outputNodes=prices.map(el=>{
-    const node=document.createElement("p");
-    node.className="note local-price";
-    node.style.cssText="margin-top:-8px;color:#e7d8b6";
-    el.insertAdjacentElement("afterend",node);
-    return {el,node,usd:Number(el.textContent.replace(/[^\d.]/g,""))};
-  });
-  let request=0;
-  async function update(){
-    const current=++request;
-    const country=countrySelect.value;
-    registrationCountry.value=country;
-    if(!country){panel.querySelector("#currencyStatus").textContent="Choose your country to see the local-currency estimate.";outputNodes.forEach(x=>x.node.textContent="");return;}
-    panel.querySelector("#currencyStatus").textContent="Getting the latest available exchange rate…";
-    try{
-      const countryResponse=await fetch("https://restcountries.com/v3.1/name/"+encodeURIComponent(country)+"?fields=currencies");
-      if(!countryResponse.ok) throw new Error("Country currency lookup unavailable");
-      const countryData=await countryResponse.json();
-      const currency=Object.keys(countryData[0]?.currencies||{})[0];
-      if(!currency) throw new Error("Currency not listed for this country");
-      const rateResponse=await fetch("https://open.er-api.com/v6/latest/USD");
-      if(!rateResponse.ok) throw new Error("Exchange rate unavailable");
-      const rateData=await rateResponse.json();
-      const rate=Number(rateData.rates?.[currency]);
-      if(!rate || !Number.isFinite(rate)) throw new Error("Exchange rate unavailable");
-      if(current!==request) return;
-      const formatter=new Intl.NumberFormat(undefined,{style:"currency",currency,maximumFractionDigits:2});
-      outputNodes.forEach(x=>x.node.textContent="Approx. "+formatter.format(x.usd*rate)+" · based on USD exchange rate");
-      panel.querySelector("#currencyStatus").textContent="Showing "+currency+" for "+country+". Estimates update when you change country; final payment conversion may differ.";
-    }catch(error){
-      if(current!==request) return;
-      outputNodes.forEach(x=>x.node.textContent="");
-      panel.querySelector("#currencyStatus").textContent="Local conversion is temporarily unavailable. The official price remains in USD.";
-    }
-  }
-  countrySelect.addEventListener("change",update);
-  registrationCountry.addEventListener("change",()=>{countrySelect.value=registrationCountry.value;update();});
-  if(countrySelect.value) update();
-})();
-</script>
+
 
 
 
@@ -527,6 +462,73 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
 
 
 <script>
+/* Country-based display conversion. USD remains the academy's base price. */
+(function(){
+  const fees=document.getElementById("fees");
+  const registrationCountry=document.getElementById("regCountry");
+  if(!fees || !registrationCountry) return;
+  const panel=document.createElement("div");
+  panel.className="card";
+  panel.style.cssText="max-width:720px;margin:20px auto;text-align:left";
+  panel.innerHTML='<h3>Choose your country and view local currency</h3><label for="displayCountry">Your country</label><select id="displayCountry" aria-label="Choose your country"></select><p id="currencyStatus" class="note" role="status">Select your country to view an estimated local-currency equivalent. Official course prices remain in USD.</p>';
+  const grid=fees.querySelector(".grid");
+  if(grid) fees.insertBefore(panel,grid);
+  const countrySelect=panel.querySelector("#displayCountry");
+  countrySelect.innerHTML=registrationCountry.innerHTML;
+  countrySelect.value=registrationCountry.value;
+  if(!countrySelect.value){
+    const region=(navigator.language||"").split("-")[1];
+    if(region){
+      try{
+        const countryName=new Intl.DisplayNames(["en"],{type:"region"}).of(region.toUpperCase());
+        const option=[...countrySelect.options].find(o=>o.text.trim().toLowerCase()===String(countryName).toLowerCase());
+        if(option) countrySelect.value=option.value;
+      }catch(_){}
+    }
+  }
+  const prices=[...fees.querySelectorAll(".price")].filter(el=>/^\$\s*[\d,.]+$/.test(el.textContent.trim()));
+  const outputNodes=prices.map(el=>{
+    const node=document.createElement("p");
+    node.className="note local-price";
+    node.style.cssText="margin-top:-8px;color:#e7d8b6";
+    el.insertAdjacentElement("afterend",node);
+    return {el,node,usd:Number(el.textContent.replace(/[^\d.]/g,""))};
+  });
+  let request=0;
+  async function update(){
+    const current=++request;
+    const country=countrySelect.value;
+    registrationCountry.value=country;
+    if(!country){panel.querySelector("#currencyStatus").textContent="Choose your country to see the local-currency estimate.";outputNodes.forEach(x=>x.node.textContent="");return;}
+    panel.querySelector("#currencyStatus").textContent="Getting the latest available exchange rate…";
+    try{
+      const countryResponse=await fetch("https://restcountries.com/v3.1/name/"+encodeURIComponent(country)+"?fields=currencies");
+      if(!countryResponse.ok) throw new Error("Country currency lookup unavailable");
+      const countryData=await countryResponse.json();
+      const currency=Object.keys(countryData[0]?.currencies||{})[0];
+      if(!currency) throw new Error("Currency not listed for this country");
+      const rateResponse=await fetch("https://open.er-api.com/v6/latest/USD");
+      if(!rateResponse.ok) throw new Error("Exchange rate unavailable");
+      const rateData=await rateResponse.json();
+      const rate=Number(rateData.rates?.[currency]);
+      if(!rate || !Number.isFinite(rate)) throw new Error("Exchange rate unavailable");
+      if(current!==request) return;
+      const formatter=new Intl.NumberFormat(undefined,{style:"currency",currency,maximumFractionDigits:2});
+      outputNodes.forEach(x=>x.node.textContent="Approx. "+formatter.format(x.usd*rate)+" · based on USD exchange rate");
+      panel.querySelector("#currencyStatus").textContent="Showing "+currency+" for "+country+". Estimates update when you change country; final payment conversion may differ.";
+    }catch(error){
+      if(current!==request) return;
+      outputNodes.forEach(x=>x.node.textContent="");
+      panel.querySelector("#currencyStatus").textContent="Local conversion is temporarily unavailable. The official price remains in USD.";
+    }
+  }
+  countrySelect.addEventListener("change",update);
+  registrationCountry.addEventListener("change",()=>{countrySelect.value=registrationCountry.value;update();});
+  if(countrySelect.value) update();
+})();
+</script>
+
+<script>
 /* Country-aware student experience: country choice controls local class time,
    WhatsApp dialing guidance, and the available checkout explanation. */
 (function(){
@@ -554,17 +556,21 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
   const dayNames=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   function localClassRows(timeZone){
     const now=new Date(), rows=[];
+    const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Africa/Nairobi",year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"}).formatToParts(now);
+    const get=k=>parts.find(p=>p.type===k)?.value;
+    const base=Date.UTC(Number(get("year")),Number(get("month"))-1,Number(get("day")));
+    const weekdayMap={Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+    const today=weekdayMap[get("weekday")];
     for(const targetDay of classDays){
-      let delta=(targetDay-now.getDay()+7)%7;
-      if(delta===0) delta=7;
-      const day=new Date(now); day.setDate(now.getDate()+delta);
-      const y=day.getFullYear(),m=day.getMonth(),d=day.getDate();
-      // 8 PM EAT = 17:00 UTC; 10 PM EAT = 19:00 UTC.
-      const start=new Date(Date.UTC(y,m,d,17,0));
-      const end=new Date(Date.UTC(y,m,d,19,0));
+      let delta=(targetDay-today+7)%7;
+      const candidate=new Date(base+delta*86400000+17*3600000);
+      if(candidate<=now) delta+=7;
+      // Nairobi is UTC+3 year-round: 20:00–22:00 EAT = 17:00–19:00 UTC.
+      const start=new Date(base+delta*86400000+17*3600000);
+      const end=new Date(start.getTime()+2*3600000);
       const fmt=new Intl.DateTimeFormat(undefined,{timeZone,hour:"numeric",minute:"2-digit",hour12:true});
-      const localDay=new Intl.DateTimeFormat(undefined,{timeZone,weekday:"long"}).format(start);
-      rows.push(localDay+": "+fmt.format(start)+"–"+fmt.format(end));
+      const dateFmt=new Intl.DateTimeFormat(undefined,{timeZone,weekday:"long",month:"short",day:"numeric"});
+      rows.push(dateFmt.format(start)+": "+fmt.format(start)+"–"+fmt.format(end));
     }
     return rows.join(" · ");
   }
