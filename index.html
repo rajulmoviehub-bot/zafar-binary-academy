@@ -286,6 +286,8 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
     if(error){list.textContent="Examinations are not available yet. The academy may still be setting them up.";return;}
     const {data:submissions, error:submissionError}=await client.from("academy_exam_submissions").select("*").eq("student_id",user.id);
     if(submissionError){list.textContent="Could not load your exam submissions.";return;}
+    const {data:markedPapers,error:markedError}=await client.from("academy_exam_submissions").select("*").eq("status","marked").order("marked_at",{ascending:false});
+    if(markedError){list.textContent="Could not load marked student papers.";return;}
     list.replaceChildren();
     if(!exams.length){list.textContent="No examination has been published yet.";return;}
     for(const exam of exams){
@@ -322,6 +324,25 @@ footer{text-align:center;padding:30px;border-top:1px solid #332817;color:#aaa}a{
       }
       list.appendChild(card);
     }
+    const shared=document.createElement("div");
+    shared.style.cssText="border-top:1px solid #40331e;margin-top:24px;padding-top:18px";
+    const sharedTitle=document.createElement("h3");
+    sharedTitle.textContent="All marked student papers";
+    const sharedNote=document.createElement("p");
+    sharedNote.className="note";
+    sharedNote.textContent="Every approved and paid student can view these papers after the academy has marked them.";
+    shared.append(sharedTitle,sharedNote);
+    if(!markedPapers.length){
+      const empty=document.createElement("p");empty.className="note";empty.textContent="No marked papers have been published yet.";shared.appendChild(empty);
+    }
+    for(const paper of markedPapers){
+      const row=document.createElement("div");row.style.cssText="border-top:1px solid #40331e;padding:12px 0";
+      const name=document.createElement("strong");name.textContent=(paper.student_name||"Student")+" — "+(paper.exam_title||"Examination");
+      const result=document.createElement("p");result.className="note";result.textContent="Score: "+(paper.score||"Marked")+" · Feedback: "+(paper.feedback||"No feedback provided")+" · Marked: "+examDate(paper.marked_at);
+      const open=document.createElement("button");open.type="button";open.className="btn outline";open.textContent="VIEW MARKED PAPER";open.onclick=async()=>{try{const url=await signedExamLink(paper.file_path);window.open(url,"_blank","noopener");}catch(e){alert(e.message||"Could not open marked paper.");}};
+      row.append(name,result,open);shared.appendChild(row);
+    }
+    list.appendChild(shared);
   }
   async function loadAdminDashboard() {
     const { data: apps, error } = await client.from("student_applications").select("*").order("created_at", {ascending:false});
