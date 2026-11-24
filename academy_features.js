@@ -16,6 +16,8 @@
     const panel=$("studentFeatureHub");if(!panel)return;
     const {data:app}=await client.from("student_applications").select("application_status,payment_status,passport_name").eq("user_id",user.id).maybeSingle();
     if(!eligible(app)){panel.style.display="none";return;}
+    if(panel.dataset.studentId===user.id)return;
+    panel.dataset.studentId=user.id;
     panel.style.display="block";
     await Promise.all([loadLessons(),loadReminders(),loadTickets(user),loadDiscussions(),loadLeaderboard(user,app)]);
     $("supportTicketForm")?.addEventListener("submit",async e=>{
@@ -82,7 +84,7 @@
     if($("leaderboardOptIn"))$("leaderboardOptIn").checked=!!mine.data?.opted_in;
   }
   async function adminFeatures(){
-    const section=$("adminFeatureTools");if(!section)return;section.style.display="block";
+    const section=$("adminFeatureTools");if(!section)return;if(section.dataset.adminReady==="1")return;section.dataset.adminReady="1";section.style.display="block";
     const [apps,lessons,tickets,posts,reminders,rankings]=await Promise.all([
       client.from("student_applications").select("id,application_status,payment_status",{count:"exact"}),
       client.from("academy_lessons").select("id,published",{count:"exact"}),
