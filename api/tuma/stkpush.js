@@ -63,6 +63,11 @@ module.exports = async function handler(req, res) {
     const user = await userResponse.json().catch(() => ({}));
     if (!userResponse.ok || !user.id || !user.email_confirmed_at) return json(res, 401, { error: "Please confirm your email and sign in again." });
 
+    const testMode = env("TUMA_TEST_MODE").toLowerCase() === "true";
+    if (testMode && String(user.email || "").toLowerCase() !== "rajulmoviehub@gmail.com") {
+      return json(res, 403, { error: "Sandbox testing is restricted to the academy administrator." });
+    }
+
     const phone = normalizePhone(req.body && req.body.phone);
     const applications = await db("/rest/v1/student_applications?user_id=eq." + encodeURIComponent(user.id) + "&select=id,payment_status,country");
     const application = applications[0];
@@ -72,7 +77,8 @@ module.exports = async function handler(req, res) {
 
     const paid = await db("/rest/v1/student_applications?payment_status=eq.paid&select=id");
     const foundingOffer = paid.length < 20;
-    const amount = foundingOffer ? 10000 : 15000;
+    const courseAmount = foundingOffer ? 10000 : 15000;
+    const amount = testMode ? 1 : courseAmount;
     const usdKesRate = Number(env("USD_KES_REFERENCE_RATE")) || 129.97;
     const amountUsd = Number((amount / usdKesRate).toFixed(2));
     const callbackUrl = env("TUMA_CALLBACK_URL") || "https://zafar-binary-academy.vercel.app/api/tuma/callback";
@@ -89,7 +95,7 @@ module.exports = async function handler(req, res) {
         usd_amount: Math.round(amountUsd),
         exchange_rate: usdKesRate,
         phone,
-        status: "initiating"
+        status: testMode ? "sandbox_initiating" : "initiating"
       })
     });
 
@@ -101,7 +107,7 @@ module.exports = async function handler(req, res) {
         amount,
         phone,
         callback_url: callbackUrl,
-        description: "ZAFAR BINARY ACADEMY COURSE FEE"
+        description: testMode ? "ZAFAR ACADEMY SANDBOX TEST - NOT COURSE FEE" : "ZAFAR BINARY ACADEMY COURSE FEE"
       })
     });
     const result = await response.json().catch(() => ({}));
@@ -119,7 +125,7 @@ module.exports = async function handler(req, res) {
     await db("/rest/v1/academy_payment_intents?id=eq." + id, {
       method: "PATCH",
       body: JSON.stringify({
-        status: "stk_sent",
+        status: testMode ? "sandbox_stk_sent" : "stk_sent",
         checkout_request_id: String(checkoutId),
         merchant_request_id: merchantId ? String(merchantId) : null
       })
@@ -127,10 +133,12 @@ module.exports = async function handler(req, res) {
     return json(res, 200, {
       ok: true,
       payment_id: id,
-      amount_usd: amountUsd,
+      amount_kes: amount,
+      amount_usd: testMode ? 0 : amountUsd,
+      sandbox_test: testMode,
       founding_offer: foundingOffer,
       checkout_request_id: String(checkoutId),
-      message: "Tuma sent the M-Pesa prompt. Enter your PIN if you initiated this payment. Enrolment remains pending until the academy independently verifies the receipt."
+      message: testMode ? "SANDBOX TEST ONLY: KES 1. This is not a course-fee payment and does not enroll or unlock the student account." : "Tuma sent the M-Pesa prompt. Enter your PIN if you initiated this payment. Enrolment remains pending until the academy independently verifies the receipt."
     });
   } catch (error) {
     return json(res, 500, { error: error.message || "Could not start Tuma payment." });
