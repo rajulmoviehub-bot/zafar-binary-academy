@@ -104,10 +104,10 @@ using ((auth.jwt()->>'email')='rajulmoviehub@gmail.com')
 with check ((auth.jwt()->>'email')='rajulmoviehub@gmail.com');
 drop policy if exists "zba eligible read optin leaderboard" on public.academy_leaderboard;
 create policy "zba eligible read optin leaderboard" on public.academy_leaderboard for select to authenticated
-using (opted_in and exists(select 1 from public.student_applications a where a.user_id=auth.uid() and a.application_status='approved' and a.payment_status='paid'));
+using (student_id=auth.uid() or (opted_in and exists(select 1 from public.student_applications a where a.user_id=auth.uid() and a.application_status='approved' and a.payment_status='paid')));
 drop policy if exists "zba student create leaderboard profile" on public.academy_leaderboard;
 create policy "zba student create leaderboard profile" on public.academy_leaderboard for insert to authenticated
-with check (student_id=auth.uid() and points=0 and opted_in=false and exists(select 1 from public.student_applications a where a.user_id=auth.uid() and a.application_status='approved' and a.payment_status='paid'));
+with check (student_id=auth.uid() and points=0 and exists(select 1 from public.student_applications a where a.user_id=auth.uid() and a.application_status='approved' and a.payment_status='paid'));
 drop policy if exists "zba student update own leaderboard optin" on public.academy_leaderboard;
 create policy "zba student update own leaderboard optin" on public.academy_leaderboard for update to authenticated
 using (student_id=auth.uid())
