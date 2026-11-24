@@ -1282,53 +1282,6 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
 })();
 </script>
 
-<!-- ZBA LOGIN RECOVERY PATCH -->
-<script>
-(function(){
-  "use strict";
-  const form=document.getElementById("loginForm");
-  if(!form)return;
-  const message=document.getElementById("loginMessage");
-  const button=form.querySelector('button[type="submit"]');
-  const say=value=>{if(message){message.textContent=value;message.style.display="block";}};
-  function loadScript(url){
-    return new Promise((resolve,reject)=>{
-      const s=document.createElement("script");s.src=url;s.async=true;
-      s.onload=resolve;s.onerror=()=>reject(new Error("Could not load authentication library."));
-      document.head.appendChild(s);
-    });
-  }
-  async function getClient(){
-    if(window.zbaClient?.auth)return window.zbaClient;
-    if(!window.supabase?.createClient){
-      try{await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");}
-      catch(_){await loadScript("https://unpkg.com/@supabase/supabase-js@2");}
-    }
-    if(!window.supabase?.createClient)throw new Error("Secure login service did not load. Check your connection and refresh.");
-    const client=window.supabase.createClient("https://vmubnpnhmfljpgehogai.supabase.co","sb_publishable_e2nUv2WnEyEvroA68ByXmw_55SajdIA");
-    window.zbaClient=client;
-    return client;
-  }
-  form.addEventListener("submit",async event=>{
-    event.preventDefault();event.stopImmediatePropagation();
-    if(button){button.disabled=true;button.textContent="SIGNING IN...";}
-    say("Connecting securely...");
-    try{
-      const email=document.getElementById("loginEmail")?.value.trim();
-      const password=document.getElementById("loginPassword")?.value;
-      if(!email||!password)throw new Error("Enter your registered email and password.");
-      const client=await getClient();
-      const {data,error}=await client.auth.signInWithPassword({email,password});
-      if(error)throw error;
-      if(!data?.session)throw new Error("No session was created. Confirm your email address, then try again.");
-      say("Login successful. Opening your dashboard...");
-      window.location.reload();
-    }catch(error){
-      say(error?.message||"Login failed. Please try again.");
-      if(button){button.disabled=false;button.textContent="LOGIN";}
-    }
-  },true);
-})();
-</script>
+
 
 </body></html>
