@@ -627,6 +627,33 @@
     }
   });
 
+  document.getElementById("adminTumaTestForm")?.addEventListener("submit", async event => {
+    event.preventDefault();
+    const form=event.currentTarget;
+    const button=form.querySelector('button[type="submit"]');
+    const message=document.getElementById("adminTumaTestMessage");
+    button.disabled=true; button.textContent="SENDING KES 1 TEST...";
+    message.textContent="Checking administrator session and contacting Tuma sandbox...";
+    try {
+      const {data:sessionData,error:sessionError}=await client.auth.getSession();
+      if(sessionError) throw sessionError;
+      const session=sessionData.session;
+      if(!session?.access_token || String(session.user?.email||"").toLowerCase()!=="rajulmoviehub@gmail.com") throw new Error("Sign in with the academy administrator account first.");
+      const response=await fetch("/api/tuma/stkpush",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token},
+        body:JSON.stringify({phone:document.getElementById("adminTumaTestPhone").value.trim()})
+      });
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok) throw new Error(result.error||"Tuma sandbox test could not start.");
+      message.textContent="KES 1 sandbox prompt sent to "+document.getElementById("adminTumaTestPhone").value.trim()+". This is a test only; no student payment or enrolment was changed.";
+    } catch(err) {
+      message.textContent=err.message||"Could not start sandbox test.";
+    } finally {
+      button.disabled=false; button.textContent="SEND KES 1 SANDBOX TEST";
+    }
+  });
+
   function updateAuthPanel(isLoggedIn, message) {
     const loginSection=document.getElementById("login");
     const logoutButton=document.getElementById("logoutBtn");
