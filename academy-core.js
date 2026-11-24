@@ -191,3 +191,86 @@
 </body></html>`);
     w.document.close();
 }
+
+
+  // Essential authentication restored after the certificate-printing section.
+  function updateAuthPanel(isLoggedIn, message) {
+    const loginSection = document.getElementById("login");
+    const logoutButton = document.getElementById("logoutBtn");
+    const status = document.getElementById("authStatusMessage");
+    if (loginSection) loginSection.style.display = isLoggedIn ? "none" : "block";
+    if (logoutButton) logoutButton.style.display = isLoggedIn ? "inline-block" : "none";
+    if (status) { status.textContent = message || ""; status.style.display = message ? "block" : "none"; }
+  }
+
+  document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const button = form.querySelector('button[type="submit"]');
+    const message = document.getElementById("loginMessage");
+    if (button) { button.disabled = true; button.textContent = "SIGNING IN..."; }
+    try {
+      if (!client) throw new Error("Secure login service did not load. Refresh the page and try again.");
+      const email = document.getElementById("loginEmail")?.value.trim();
+      const password = document.getElementById("loginPassword")?.value || "";
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      if (!data?.user) throw new Error("Login was not completed. Please try again.");
+      const user = data.user;
+      updateAuthPanel(true, "Signed in successfully.");
+      if (message) message.textContent = "Signed in successfully.";
+      if (user.email?.toLowerCase() === "rajulmoviehub@gmail.com") {
+        const admin = document.getElementById("admin");
+        if (admin) admin.style.display = "block";
+        const workspace = document.getElementById("adminWorkspace");
+        if (workspace) workspace.style.display = "block";
+        if (message) message.textContent = "Administrator signed in. The admin management functions need to be restored separately.";
+      } else {
+        const { data: application, error: appError } = await client
+          .from("student_applications")
+          .select("application_status,payment_status,course,country")
+          .eq("user_id", user.id).maybeSingle();
+        if (appError) throw appError;
+        const dashboard = document.getElementById("studentDashboard");
+        if (dashboard) dashboard.style.display = "block";
+        if (application) {
+          const fields = {
+            studentApplicationStatus: application.application_status || "pending",
+            studentPaymentStatus: application.payment_status || "unpaid",
+            studentCourseName: application.course || "Full Binary Trading Course",
+            studentCountry: application.country || user.user_metadata?.country || "Not provided",
+            studentNextStep: "You are signed in. Contact academy support if you need help with enrolment."
+          };
+          for (const [id, value] of Object.entries(fields)) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+          }
+          if (typeof renderStudentProtection === "function") await renderStudentProtection(user, application);
+          if (message) message.textContent = "Welcome. Your student account is signed in.";
+        } else {
+          if (message) message.textContent = "You are signed in, but no course application was found. Contact rajulmoviehub@gmail.com.";
+        }
+      }
+    } catch (error) {
+      if (message) message.textContent = error?.message || "Login failed. Check your email, password and email-confirmation status.";
+      const { data: sessionData } = client?.auth ? await client.auth.getSession() : { data: null };
+      if (sessionData?.session?.user) updateAuthPanel(true, "You are signed in, but account details could not be loaded.");
+    } finally {
+      if (button) { button.disabled = false; button.textContent = "LOGIN"; }
+    }
+  });
+
+  document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+    if (!client) return;
+    const { error } = await client.auth.signOut();
+    updateAuthPanel(false, "");
+    const message = document.getElementById("loginMessage");
+    if (message) message.textContent = error ? error.message : "You are signed out.";
+    ["admin", "studentDashboard"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = "none";
+    });
+  });
+
+  // Close the academy script wrapper.
+})();
