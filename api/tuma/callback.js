@@ -30,11 +30,17 @@ module.exports = async function handler(req, res) {
     const checkoutId = String(body.checkout_request_id || body.checkoutRequestID || body.CheckoutRequestID || "");
     if (!checkoutId || checkoutId.length > 200) return json(res, 400, { success: false, message: "Missing checkout request ID." });
 
-    const rows = await db("/rest/v1/academy_payment_intents?checkout_request_id=eq." + encodeURIComponent(checkoutId) + "&select=id,application_id,amount_kes,phone,status");
-    const intent = rows[0];
+    let intentTable = "academy_payment_intents";
+    let rows = await db("/rest/v1/academy_payment_intents?checkout_request_id=eq." + encodeURIComponent(checkoutId) + "&select=id,application_id,amount_kes,phone,status");
+    let intent = rows[0] || null;
+    if (!intent) {
+      intentTable = "academy_sandbox_tests";
+      rows = await db("/rest/v1/academy_sandbox_tests?checkout_request_id=eq." + encodeURIComponent(checkoutId) + "&select=id,amount_kes,phone,status");
+      intent = rows[0] || null;
+    }
     if (!intent) return json(res, 200, { success: true, message: "Callback acknowledged; no matching pending payment was found." });
 
-    const sandboxTest = String(intent.status || "").startsWith("sandbox_");
+    const sandboxTest = intentTable === "academy_sandbox_tests" || String(intent.status || "").startsWith("sandbox_");
     const resultCode = Number(body.result_code ?? body.resultCode ?? body.ResultCode);
     const status = String(body.status || "").toLowerCase();
     const amount = Number(body.amount);
@@ -49,7 +55,7 @@ module.exports = async function handler(req, res) {
       ? { status: sandboxTest ? "sandbox_callback_received" : "callback_received", mpesa_receipt: String(receipt), callback_amount: amount, callback_phone: callbackPhone || null, result_code: resultCode, result_description: "Tuma callback received; awaiting independent merchant reconciliation.", raw_callback: body }
       : { status: (status === "failed" || (Number.isFinite(resultCode) && resultCode !== 0)) ? "failed" : "review_required", result_code: Number.isFinite(resultCode) ? resultCode : null, result_description: "Tuma callback received; details require independent verification.", raw_callback: body };
 
-    await db("/rest/v1/academy_payment_intents?id=eq." + intent.id, { method: "PATCH", body: JSON.stringify(patch) });
+    await db("/rest/v1/" + intentTable + "?id=eq." + intent.id, { method: "PATCH", body: JSON.stringify(patch) });
     if (success && receipt && !sandboxTest) {
       await db("/rest/v1/student_applications?id=eq." + intent.application_id, {
         method: "PATCH", body: JSON.stringify({ payment_reference: String(receipt) })
