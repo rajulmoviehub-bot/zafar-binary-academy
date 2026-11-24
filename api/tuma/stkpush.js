@@ -90,12 +90,13 @@ module.exports = async function handler(req, res) {
     if (!callbackUrl.startsWith("https://")) throw new Error("Tuma callback URL must use HTTPS.");
 
     const id = randomUUID();
-    await db("/rest/v1/academy_payment_intents", {
+    const intentTable = adminSandboxTest ? "academy_sandbox_tests" : "academy_payment_intents";
+    await db("/rest/v1/" + intentTable, {
       method: "POST",
       body: JSON.stringify({
         id,
         user_id: user.id,
-        application_id: application ? application.id : null,
+        ...(adminSandboxTest ? {} : { application_id: application.id }),
         amount_kes: amount,
         usd_amount: Math.round(amountUsd),
         exchange_rate: usdKesRate,
@@ -120,14 +121,14 @@ module.exports = async function handler(req, res) {
     const checkoutId = data.checkout_request_id || data.checkoutRequestID || data.CheckoutRequestID;
     const merchantId = data.merchant_request_id || data.MerchantRequestID || null;
     if (!response.ok || result.success !== true || !checkoutId) {
-      await db("/rest/v1/academy_payment_intents?id=eq." + id, {
+      await db("/rest/v1/" + intentTable + "?id=eq." + id, {
         method: "PATCH",
         body: JSON.stringify({ status: "failed", result_description: String(result.message || "Tuma could not start the STK request.").slice(0, 500) })
       }).catch(() => {});
       return json(res, 502, { error: result.message || "Tuma could not start the M-Pesa payment prompt." });
     }
 
-    await db("/rest/v1/academy_payment_intents?id=eq." + id, {
+    await db("/rest/v1/" + intentTable + "?id=eq." + id, {
       method: "PATCH",
       body: JSON.stringify({
         status: testMode ? "sandbox_stk_sent" : "stk_sent",
