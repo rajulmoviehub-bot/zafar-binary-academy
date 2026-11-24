@@ -69,11 +69,16 @@ module.exports = async function handler(req, res) {
     }
 
     const phone = normalizePhone(req.body && req.body.phone);
-    const applications = await db("/rest/v1/student_applications?user_id=eq." + encodeURIComponent(user.id) + "&select=id,payment_status,country");
-    const application = applications[0];
-    if (!application) return json(res, 400, { error: "Your student application was not found. Please complete registration and sign in again." });
-    if (application.country !== "Kenya") return json(res, 403, { error: "Tuma M-Pesa checkout is currently enabled only for students registered in Kenya." });
-    if (application.payment_status === "paid") return json(res, 409, { error: "Your course payment is already recorded." });
+    const isAcademyAdmin = String(user.email || "").toLowerCase() === "rajulmoviehub@gmail.com";
+    const adminSandboxTest = testMode && isAcademyAdmin;
+    const applications = adminSandboxTest
+      ? await db("/rest/v1/student_applications?user_id=eq." + encodeURIComponent(user.id) + "&select=id,payment_status,country")
+      : await db("/rest/v1/student_applications?user_id=eq." + encodeURIComponent(user.id) + "&select=id,payment_status,country");
+    const application = applications[0] || null;
+    // Admin sandbox tests are isolated from student enrolment and may run without an admin student application.
+    if (!application && !adminSandboxTest) return json(res, 400, { error: "Your student application was not found. Please complete registration and sign in again." });
+    if (application && application.country !== "Kenya" && !adminSandboxTest) return json(res, 403, { error: "Tuma M-Pesa checkout is currently enabled only for students registered in Kenya." });
+    if (application && application.payment_status === "paid" && !adminSandboxTest) return json(res, 409, { error: "Your course payment is already recorded." });
 
     const paid = await db("/rest/v1/student_applications?payment_status=eq.paid&select=id");
     const foundingOffer = paid.length < 20;
@@ -90,7 +95,7 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         id,
         user_id: user.id,
-        application_id: application.id,
+        application_id: application ? application.id : null,
         amount_kes: amount,
         usd_amount: Math.round(amountUsd),
         exchange_rate: usdKesRate,
