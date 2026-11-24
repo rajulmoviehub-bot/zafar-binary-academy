@@ -203,7 +203,6 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
 </script>
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 (() => {
   const SUPABASE_URL = "https://vmubnpnhmfljpgehogai.supabase.co";
@@ -855,6 +854,11 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
       });
       if (error) throw error;
       const user=data.user;
+      // Hide the login form as soon as Supabase confirms authentication.
+      // Dashboard queries may take longer or fail independently; they must not
+      // make a successful sign-in look like the user was logged out.
+      updateAuthPanel(true, "Signed in successfully. Loading your secure academy area...");
+      show("loginMessage", "Signed in successfully. Loading your secure academy area...");
       const isAdmin=user.email?.toLowerCase()==="rajulmoviehub@gmail.com";
       if (isAdmin) {
         show("loginMessage","Administrator signed in. Loading management dashboard...");
