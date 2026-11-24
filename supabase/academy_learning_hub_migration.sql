@@ -98,6 +98,10 @@ create policy "zba student read own support tickets" on public.academy_support_t
 using (student_id=auth.uid());
 
 -- A student may manage only their own leaderboard opt-in record. Rank/points are staff-controlled.
+drop policy if exists "zba admin manage leaderboard" on public.academy_leaderboard;
+create policy "zba admin manage leaderboard" on public.academy_leaderboard for all to authenticated
+using ((auth.jwt()->>'email')='rajulmoviehub@gmail.com')
+with check ((auth.jwt()->>'email')='rajulmoviehub@gmail.com');
 drop policy if exists "zba eligible read optin leaderboard" on public.academy_leaderboard;
 create policy "zba eligible read optin leaderboard" on public.academy_leaderboard for select to authenticated
 using (opted_in and exists(select 1 from public.student_applications a where a.user_id=auth.uid() and a.application_status='approved' and a.payment_status='paid'));
