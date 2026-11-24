@@ -605,14 +605,14 @@
     const button=form.querySelector('button[type="submit"]');
     const message=document.getElementById("studentMpesaMessage");
     button.disabled=true; button.textContent="SENDING REQUEST...";
-    message.textContent="Connecting securely to M-Pesa...";
+    message.textContent="Connecting securely to Tuma M-Pesa...";
     try {
       const {data:sessionData,error:sessionError}=await client.auth.getSession();
       if(sessionError) throw sessionError;
       const accessToken=sessionData.session?.access_token;
       if(!accessToken) throw new Error("Your login session has expired. Please log in again.");
       const phone=document.getElementById("studentMpesaPhone").value.trim();
-      const response=await fetch("/api/mpesa/stkpush",{
+      const response=await fetch("/api/tuma/stkpush",{
         method:"POST",
         headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken},
         body:JSON.stringify({phone})
@@ -623,7 +623,7 @@
     } catch(err) {
       message.textContent=err.message||"Could not start payment. Please try again.";
     } finally {
-      button.disabled=false; button.textContent="PAY WITH M-PESA";
+      button.disabled=false; button.textContent="PAY COURSE FEE WITH TUMA M-PESA";
     }
   });
 
