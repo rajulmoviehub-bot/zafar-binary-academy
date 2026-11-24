@@ -40,10 +40,11 @@ async function tumaToken() {
     body: JSON.stringify({ email, api_key: apiKey })
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok || data.success !== true || !data.token) {
+  const token = data.data && data.data.token;
+  if (!response.ok || data.success !== true || !token) {
     throw new Error(data.message || "Tuma authentication failed. Check the saved credentials and account mode.");
   }
-  return data.token;
+  return token;
 }
 
 module.exports = async function handler(req, res) {
