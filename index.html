@@ -227,20 +227,9 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
       if(notice){notice.style.display="block";notice.textContent="⚠️ PERSONAL ACCOUNT PROTECTION — This student account is active in this browser tab. Signing in on another tab in this same browser signs out the earlier tab. Other devices may still be able to sign in; full cross-device session enforcement requires server-side authentication controls.";}
     } catch (_) {}
   }
-  window.addEventListener("storage",async event=>{
-    if(event.key!==studentSessionKey || !activeStudentUserId || !event.newValue) return;
-    try {
-      const current=JSON.parse(event.newValue);
-      if(current.userId===activeStudentUserId && current.token!==studentTabToken){
-        await client.auth.signOut();
-        activeStudentUserId="";
-        const dashboard=document.getElementById("studentDashboard");
-        if(dashboard) dashboard.style.display="none";
-        updateAuthPanel(false,"This student account was opened in another tab in this browser. Please sign in again here.");
-        show("loginMessage","For account protection, only one active tab per student account is allowed in this browser.");
-      }
-    } catch (_) {}
-  });
+  // Do not sign out a user when another browser tab claims the same account.
+  // Supabase shares one persisted session across tabs; signing out here would
+  // also invalidate the newly signed-in tab and create a login loop.
   async function renderStudentProtection(user,application){
     const name=application?.passport_name||user.user_metadata?.full_name||"Student";
     const email=user.email||"";
