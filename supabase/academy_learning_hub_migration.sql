@@ -114,3 +114,24 @@ grant select,insert,update,delete on public.academy_support_tickets to authentic
 grant select,insert,update,delete on public.academy_reminders to authenticated;
 grant select,insert,update,delete on public.academy_discussions to authenticated;
 grant select,insert,update on public.academy_leaderboard to authenticated;
+
+-- Prevent students from awarding themselves points or changing their displayed name.
+create or replace function public.zba_lock_student_leaderboard_fields()
+returns trigger language plpgsql as $$
+begin
+  if coalesce(auth.jwt()->>'email','') <> 'rajulmoviehub@gmail.com' then
+    if tg_op = 'UPDATE' then
+      new.points := old.points;
+      new.display_name := old.display_name;
+    else
+      new.points := 0;
+      new.display_name := coalesce(nullif(trim(old.display_name),''),'Student');
+    end if;
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists zba_lock_student_leaderboard_fields on public.academy_leaderboard;
+create trigger zba_lock_student_leaderboard_fields
+before insert or update on public.academy_leaderboard
+for each row execute function public.zba_lock_student_leaderboard_fields();
