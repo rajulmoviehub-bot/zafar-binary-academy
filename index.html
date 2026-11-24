@@ -403,6 +403,61 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
   box-shadow:0 0 20px #ffd978,0 0 38px #d5ad55;
 }
   </style></head><body><main class="sheet"><div class="academy">ZAFAR BINARY ACADEMY</div><div class="sub">CERTIFICATE OF COMPLETION</div><p class="bodycopy">This certificate is proudly presented to</p><div class="name">${safe(c.student_name)}</div><div class="rule"></div><p class="bodycopy">for successfully completing</p><div class="course">${safe(c.course)}</div><p class="bodycopy">and meeting the academy's course completion requirements.</p><div class="signature">C.E.O PAUL K</div><div class="small">Chief Executive Officer · ZAFAR BINARY ACADEMY</div><div class="verify">Certificate No: ${safe(c.certificate_number)}<br>Issue date: ${safe(c.issued_at)}<br>Scan the QR code to verify this certificate online.</div><div class="qrwrap"><div id="qrcode" class="qr"></div>SCAN TO VERIFY</div></main><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\\/script><script>window.onload=()=>{new QRCode(document.getElementById("qrcode"),{text:${JSON.stringify(verifyUrl)},width:150,height:150,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.H});setTimeout(()=>window.print(),700)};<\\/script><script src="/academy_features.js" defer></script>
+
+<!-- ZBA LOGIN RECOVERY PATCH -->
+<script>
+(function(){
+  "use strict";
+  const form=document.getElementById("loginForm");
+  if(!form)return;
+  const message=document.getElementById("loginMessage");
+  const button=form.querySelector('button[type="submit"]');
+  const say=(value)=>{if(message){message.textContent=value;message.style.display="block";}};
+  function loadScript(url){
+    return new Promise((resolve,reject)=>{
+      const s=document.createElement("script");s.src=url;s.async=true;
+      s.onload=resolve;s.onerror=()=>reject(new Error("Could not load authentication library."));
+      document.head.appendChild(s);
+    });
+  }
+  async function getClient(){
+    if(window.zbaClient?.auth)return window.zbaClient;
+    if(!window.supabase?.createClient){
+      try{await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");}
+      catch(_){await loadScript("https://unpkg.com/@supabase/supabase-js@2");}
+    }
+    if(!window.supabase?.createClient)throw new Error("Secure login service did not load. Check your internet connection, then refresh.");
+    const client=window.supabase.createClient(
+      "https://vmubnpnhmfljpgehogai.supabase.co",
+      "sb_publishable_e2nUv2WnEyEvroA68ByXmw_55SajdIA",
+      {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
+    );
+    window.zbaClient=client;
+    return client;
+  }
+  form.addEventListener("submit",async function(event){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if(button){button.disabled=true;button.textContent="SIGNING IN...";}
+    say("Connecting securely...");
+    try{
+      const email=document.getElementById("loginEmail")?.value.trim();
+      const password=document.getElementById("loginPassword")?.value;
+      if(!email||!password)throw new Error("Enter your registered email and password.");
+      const client=await getClient();
+      const {data,error}=await client.auth.signInWithPassword({email,password});
+      if(error)throw error;
+      if(!data?.session)throw new Error("Login was accepted but no session was created. Confirm your email address, then try again.");
+      say("Login successful. Opening your dashboard...");
+      window.location.reload();
+    }catch(error){
+      say(error?.message||"Login failed. Please try again.");
+      if(button){button.disabled=false;button.textContent="LOGIN";}
+    }
+  },true);
+})();
+</script>
+
 </body></html>`);
     w.document.close();
   }
