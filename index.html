@@ -546,8 +546,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
       client.from("academy_attendance").select("class_date,attendance_status,note").eq("student_id",user.id).order("class_date",{ascending:false}),
       client.from("academy_lesson_progress").select("lesson_title,progress_status,progress_percent,notes,updated_at").eq("student_id",user.id).order("updated_at",{ascending:false})
     ]);
-    if(attendanceError)throw attendanceError;
-    if(progressError)throw progressError;
+    if(attendanceError||progressError){show("studentAttendanceSummary","Attendance and progress setup is pending. Please check again after the academy database update.");show("studentProgressSummary","Your login and course access are unaffected.");return;}
     const counted=attendance.filter(x=>x.attendance_status!=="excused");
     const attended=counted.filter(x=>["present","late"].includes(x.attendance_status)).length;
     const attendanceRate=counted.length?Math.round(attended/counted.length*100):null;
@@ -580,8 +579,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
       client.from("academy_attendance").select("*").order("class_date",{ascending:false}).limit(100),
       client.from("academy_lesson_progress").select("*").order("updated_at",{ascending:false}).limit(100)
     ]);
-    if(attendanceError)throw attendanceError;
-    if(progressError)throw progressError;
+    if(attendanceError||progressError){box.textContent="Attendance and lesson progress tables are not installed yet. Run supabase/attendance_progress_migration.sql in the Supabase SQL Editor, then refresh this dashboard.";return;}
     box.replaceChildren();
     const headingA=document.createElement("strong");headingA.textContent="Attendance (latest 100)";
     box.appendChild(headingA);
