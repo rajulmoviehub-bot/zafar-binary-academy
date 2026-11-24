@@ -95,12 +95,32 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
 <section id="login"><div class="center"><h2>Student Login</h2><p>Access your learning account.</p></div><div class="card" style="max-width:520px;margin:auto"><p class="note">Sign in using the email address and password you registered with.</p><form id="loginForm"><label>Email address</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Your registered email" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password" required><button class="btn" type="submit">LOGIN</button><p id="loginMessage" class="note" role="status"></p></form><p class="note">Need help? Email <a href="mailto:rajulmoviehub@gmail.com">academy support</a>.</p></div></section>
 <div class="center" style="padding:10px"><p id="authStatusMessage" class="note" role="status" style="display:none"></p><button class="btn outline" id="logoutBtn" type="button" style="display:none">LOG OUT</button></div>
 
-<section id="studentDashboard" style="display:none"><div id="studentSecurityWatermark" aria-hidden="true"></div><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div id="disciplineNotice" class="warning" role="status" aria-live="polite" style="display:none;max-width:720px;margin:0 auto 16px"></div><div id="studentProtectionNotice" style="display:none" role="note">⚠️ PERSONAL LEARNING ACCESS — Materials are licensed to the signed-in student. Do not share accounts, copy, record, photograph, redistribute or resell lessons, exam papers or marked work. Your name and account details are watermarked on protected study files. Access may be reviewed after verified misuse. Screenshots cannot be reliably blocked by a website.</div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Country:</strong> <span id="studentCountry">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><div id="studentExams" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Examinations</h3><p class="note">Download published exam papers, complete your work and upload your answers for marking.</p><div id="studentExamList" class="note">Loading examinations...</div></div><div id="studentClassDetails" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Class access</h3><p><strong>Timetable:</strong> <span id="studentClassSchedule">Not published yet</span></p><p><a id="studentZoomLink" target="_blank" rel="noopener" style="display:none">Open Zoom class</a></p><p><a id="studentWhatsAppLink" target="_blank" rel="noopener" style="display:none">Join private WhatsApp group</a></p></div></div></section>
+<section id="studentDashboard" style="display:none"><div id="studentSecurityWatermark" aria-hidden="true"></div><div class="center"><h2>Student Dashboard</h2><p>Your course application and enrolment status.</p></div><div id="disciplineNotice" class="warning" role="status" aria-live="polite" style="display:none;max-width:720px;margin:0 auto 16px"></div><div id="studentProtectionNotice" style="display:none" role="note">⚠️ PERSONAL LEARNING ACCESS — Materials are licensed to the signed-in student. Do not share accounts, copy, record, photograph, redistribute or resell lessons, exam papers or marked work. Your name and account details are watermarked on protected study files. Access may be reviewed after verified misuse. Screenshots cannot be reliably blocked by a website.</div><div class="card" style="max-width:720px;margin:auto"><p><strong>Application:</strong> <span id="studentApplicationStatus">—</span></p><p><strong>Payment:</strong> <span id="studentPaymentStatus">—</span></p><p><strong>Course:</strong> <span id="studentCourseName">—</span></p><p><strong>Country:</strong> <span id="studentCountry">—</span></p><p><strong>Next step:</strong> <span id="studentNextStep">—</span></p><div id="studentAcademicRecords" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Attendance & Learning Progress</h3><p id="studentAttendanceSummary" class="note">Loading attendance...</p><p id="studentProgressSummary" class="note">Loading learning progress...</p><div id="studentProgressList" class="note"></div><div id="studentAttendanceList" class="note"></div></div><div id="studentExams" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Examinations</h3><p class="note">Download published exam papers, complete your work and upload your answers for marking.</p><div id="studentExamList" class="note">Loading examinations...</div></div><div id="studentClassDetails" style="display:none;border-top:1px solid #40331e;margin-top:18px;padding-top:12px"><h3>Class access</h3><p><strong>Timetable:</strong> <span id="studentClassSchedule">Not published yet</span></p><p><a id="studentZoomLink" target="_blank" rel="noopener" style="display:none">Open Zoom class</a></p><p><a id="studentWhatsAppLink" target="_blank" rel="noopener" style="display:none">Join private WhatsApp group</a></p></div></div></section>
 <section id="certificateVerify"><div class="center"><h2>Certificate Verification</h2><p>Check an academy certificate number.</p></div><div class="card" style="max-width:560px;margin:auto"><form id="verifyCertificateForm"><label>Certificate number</label><input id="verifyCertificateNumber" required placeholder="ZBA-2026-XXXXXXXX"><button class="btn" type="submit">VERIFY CERTIFICATE</button></form><p id="verifyCertificateMessage" class="note" role="status"></p></div></section>
 <section id="admin"><div class="center"><h2>Academy Admin Panel</h2><p>Secure administrator workspace</p><span class="pill">ADMIN ACCESS</span></div>
 <div class="grid"><div class="grid"><div class="card"><div class="stat" id="adminStudentCount">—</div><p>Student applications</p></div><div class="card"><div class="stat" id="adminPendingCount">—</div><p>Pending applications</p></div><div class="card"><div class="stat" id="adminPaidCount">—</div><p>Payment records marked paid</p></div><div class="card"><div class="stat" id="adminCertificateCount">—</div><p>Certificates issued</p></div></div>
 <div id="adminWorkspace" class="card" style="margin-top:20px;display:none"><h3>Student management</h3><div class="warning" style="margin:12px 0">CONTENT-SHARING PROTECTION: Eligible student access is controlled by academy enrolment permissions. Student exam PDFs and image papers are stamped with the viewer’s name, email and student ID before opening. Review credible reports first; use the application status controls to restrict an account only after a fair review. The one-active-tab control applies only within the same browser, not across different devices. Websites cannot reliably block screenshots or external recording.</div><p class="note">Search students by name, email (if stored), WhatsApp, country, student ID or payment reference. Only mark a payment paid after checking your actual payment statement.</p><div class="form-grid" style="margin:14px 0"><div><label for="adminStudentSearch">Search students</label><input id="adminStudentSearch" type="search" placeholder="Name, email, phone, ID or receipt" autocomplete="off"></div><div><label for="adminApplicationFilter">Application status</label><select id="adminApplicationFilter"><option value="all">All applications</option><option value="submitted">Submitted / pending</option><option value="approved">Approved</option><option value="declined">Declined</option></select></div><div><label for="adminPaymentFilter">Payment status</label><select id="adminPaymentFilter"><option value="all">All payment statuses</option><option value="paid">Paid</option><option value="unpaid">Unpaid</option><option value="pending">Pending</option></select></div><div style="display:flex;align-items:end;gap:8px"><button id="adminRefreshStudents" class="btn outline" type="button">REFRESH LIST</button><span id="adminStudentResults" class="note" role="status" style="padding-bottom:16px"></span></div></div><div class="warning" style="margin-bottom:12px">Student records are shown from the academy database. Email is searchable only if it is present in the application record; the login email is not fetched from the private authentication directory.</div><div style="overflow-x:auto"><table id="adminApplications" style="width:100%;border-collapse:collapse;min-width:760px"><thead><tr><th align="left">Student</th><th align="left">Contact / Country</th><th align="left">Application</th><th align="left">Payment</th><th align="left">Actions</th></tr></thead><tbody></tbody></table></div>
-<hr style="border-color:#40331e;margin:25px 0"><h3>Class timetable & private access</h3><p class="note">Only approved students with verified payment can see these details.</p><form id="classSettingsForm"><label>Class timetable / time zone</label><input id="classScheduleInput" placeholder="e.g. Saturday and Sunday, 7:00–8:30 PM EAT" required><label>Zoom meeting URL</label><input id="classZoomInput" type="url" placeholder="https://zoom.us/j/..."><label>Private WhatsApp group invite URL</label><input id="classWhatsAppInput" type="url" placeholder="https://chat.whatsapp.com/..."><button class="btn" type="submit">SAVE CLASS DETAILS</button><p id="classSettingsMessage" class="note" role="status"></p></form><hr style="border-color:#40331e;margin:25px 0"><h3>Issue certificate</h3><form id="certificateForm"><label>Student user ID</label><input id="certStudentId" required placeholder="Copy student user ID from application record"><label>Student full name</label><input id="certStudentName" required placeholder="Full name"><label>Course</label><input id="certCourse" value="Full Binary Trading Course" required><label><input id="certCompleted" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student completed the course.</label><br><label><input id="certPassed" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student passed the final assessment.</label><br><button class="btn" type="submit">ISSUE CERTIFICATE</button><p id="certificateMessage" class="note" role="status"></p></form>
+<hr style="border-color:#40331e;margin:25px 0"><h3>Class timetable & private access</h3><p class="note">Only approved students with verified payment can see these details.</p><form id="classSettingsForm"><label>Class timetable / time zone</label><input id="classScheduleInput" placeholder="e.g. Saturday and Sunday, 7:00–8:30 PM EAT" required><label>Zoom meeting URL</label><input id="classZoomInput" type="url" placeholder="https://zoom.us/j/..."><label>Private WhatsApp group invite URL</label><input id="classWhatsAppInput" type="url" placeholder="https://chat.whatsapp.com/..."><button class="btn" type="submit">SAVE CLASS DETAILS</button><p id="classSettingsMessage" class="note" role="status"></p></form><hr style="border-color:#40331e;margin:25px 0"><h3>Attendance register</h3>
+<p class="note">Record attendance for an enrolled student. Use the student ID from the student list. One record per student per class date; saving again updates that date.</p>
+<form id="attendanceForm">
+<label>Student user ID</label><input id="attendanceStudentId" required placeholder="Paste student user ID">
+<label>Class date</label><input id="attendanceDate" type="date" required>
+<label>Attendance</label><select id="attendanceStatus" required><option value="present">Present</option><option value="late">Late</option><option value="absent">Absent</option><option value="excused">Excused</option></select>
+<label>Note (optional)</label><input id="attendanceNote" maxlength="300" placeholder="Optional class note">
+<button class="btn" type="submit">SAVE ATTENDANCE</button><p id="attendanceMessage" class="note" role="status"></p>
+</form>
+<h3>Lesson progress register</h3>
+<p class="note">Update a student's progress as lessons are completed. Students can see only their own progress.</p>
+<form id="lessonProgressForm">
+<label>Student user ID</label><input id="progressStudentId" required placeholder="Paste student user ID">
+<label>Lesson / module name</label><input id="progressLessonTitle" required maxlength="160" placeholder="e.g. Binary Foundations">
+<label>Progress status</label><select id="progressStatus" required><option value="not_started">Not started</option><option value="in_progress">In progress</option><option value="completed">Completed</option></select>
+<label>Progress percentage</label><input id="progressPercent" type="number" min="0" max="100" step="1" value="0" required>
+<label>Teacher note (optional)</label><input id="progressNotes" maxlength="500" placeholder="Feedback or next step">
+<button class="btn" type="submit">SAVE LESSON PROGRESS</button><p id="progressMessage" class="note" role="status"></p>
+</form>
+<h3>Recent attendance & progress records</h3><div id="adminAcademicRecords" class="note">Loading records...</div>
+<hr style="border-color:#40331e;margin:25px 0"><h3>Issue certificate</h3><form id="certificateForm"><label>Student user ID</label><input id="certStudentId" required placeholder="Copy student user ID from application record"><label>Student full name</label><input id="certStudentName" required placeholder="Full name"><label>Course</label><input id="certCourse" value="Full Binary Trading Course" required><label><input id="certCompleted" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student completed the course.</label><br><label><input id="certPassed" type="checkbox" required style="width:auto;margin-right:8px">I confirm the student passed the final assessment.</label><br><button class="btn" type="submit">ISSUE CERTIFICATE</button><p id="certificateMessage" class="note" role="status"></p></form>
 <hr style="border-color:#40331e;margin:25px 0"><h3>Examination creator</h3>
 <p class="note">Create an exam, add the questions/instructions, optionally attach a PDF paper, then publish it for eligible students. Students upload their completed papers here for marking.</p>
 <form id="examCreateForm">
@@ -204,7 +224,8 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
     const name=application?.passport_name||user.user_metadata?.full_name||"Student";
     const email=user.email||"";
     const id=String(user.id||"").slice(0,12);
-    user.__academyStudentName=name;\n    const stamp="ZAFAR BINARY ACADEMY • "+name+" • "+email+" • STUDENT "+id;
+    user.__academyStudentName=name;
+    const stamp="ZAFAR BINARY ACADEMY • "+name+" • "+email+" • STUDENT "+id;
     const mark=document.getElementById("studentSecurityWatermark");
     if(mark) mark.textContent=stamp+"\n"+stamp;
     const notice=document.getElementById("studentProtectionNotice");
@@ -412,7 +433,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
       const row=document.createElement("div");row.style.cssText="border-top:1px solid #40331e;padding:12px 0";
       const title=document.createElement("strong");title.textContent=(sub.student_name||"Student")+" — "+(sub.exam_title||"Exam")+" — "+sub.status;
       const details=document.createElement("p");details.className="note";details.textContent="Student ID: "+sub.student_id+" · Submitted: "+examDate(sub.submitted_at)+(sub.score!==null?" · Score: "+sub.score:"");
-      const open=document.createElement("button");open.type="button";open.className="btn outline";open.textContent="OPEN PAPER";open.onclick=async()=>{try{const url=await signedExamLink(sub.file_path);window.open(url,"_blank","noopener");}catch(e){alert(e.message||"Could not open paper.");}};
+      const open=document.createElement("button");open.type="button";open.className="btn outline";open.textContent="OPEN WATERMARKED PAPER";open.onclick=()=>openWatermarkedStudentFile(sub.file_path,{id:"admin",email:"rajulmoviehub@gmail.com",user_metadata:{full_name:"ACADEMY ADMIN"},__academyStudentName:"ACADEMY ADMIN"});
       const mark=document.createElement("button");mark.type="button";mark.className="btn";mark.textContent="MARK PAPER";mark.onclick=async()=>{
         const score=prompt("Enter score (e.g. 85/100):",sub.score??"");
         if(score===null)return;
@@ -515,6 +536,71 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
     }
     list.appendChild(shared);
   }
+  async function loadStudentAcademicRecords(user){
+    const panel=document.getElementById("studentAcademicRecords");
+    if(!panel)return;
+    panel.style.display="block";
+    show("studentAttendanceSummary","Loading attendance...");
+    show("studentProgressSummary","Loading learning progress...");
+    const [{data:attendance,error:attendanceError},{data:progress,error:progressError}]=await Promise.all([
+      client.from("academy_attendance").select("class_date,attendance_status,note").eq("student_id",user.id).order("class_date",{ascending:false}),
+      client.from("academy_lesson_progress").select("lesson_title,progress_status,progress_percent,notes,updated_at").eq("student_id",user.id).order("updated_at",{ascending:false})
+    ]);
+    if(attendanceError)throw attendanceError;
+    if(progressError)throw progressError;
+    const counted=attendance.filter(x=>x.attendance_status!=="excused");
+    const attended=counted.filter(x=>["present","late"].includes(x.attendance_status)).length;
+    const attendanceRate=counted.length?Math.round(attended/counted.length*100):null;
+    show("studentAttendanceSummary",attendanceRate===null?"No attendance has been recorded yet.": "Attendance: "+attended+" of "+counted.length+" classes attended or late ("+attendanceRate+"%). Excused classes are excluded.");
+    const avg=progress.length?Math.round(progress.reduce((sum,x)=>sum+Number(x.progress_percent||0),0)/progress.length):null;
+    show("studentProgressSummary",avg===null?"No lesson progress has been recorded yet.":"Learning progress: "+avg+"% average across "+progress.length+" recorded lesson(s).");
+    const progressList=document.getElementById("studentProgressList");
+    progressList.replaceChildren();
+    if(!progress.length){const p=document.createElement("p");p.className="note";p.textContent="Your teacher has not recorded lesson progress yet.";progressList.appendChild(p);}
+    progress.forEach(item=>{
+      const row=document.createElement("p");row.className="note";
+      row.textContent=item.lesson_title+" — "+item.progress_status.replaceAll("_"," ")+" ("+item.progress_percent+"%)"+(item.notes?" · "+item.notes:"");
+      progressList.appendChild(row);
+    });
+    const attendanceList=document.getElementById("studentAttendanceList");
+    attendanceList.replaceChildren();
+    if(!attendance.length){const p=document.createElement("p");p.className="note";p.textContent="No class attendance entries yet.";attendanceList.appendChild(p);}
+    attendance.slice(0,12).forEach(item=>{
+      const row=document.createElement("p");row.className="note";
+      row.textContent=item.class_date+" — "+item.attendance_status+(item.note?" · "+item.note:"");
+      attendanceList.appendChild(row);
+    });
+  }
+
+  async function refreshAdminAcademicRecords(){
+    const box=document.getElementById("adminAcademicRecords");
+    if(!box)return;
+    box.textContent="Loading attendance and lesson progress...";
+    const [{data:attendance,error:attendanceError},{data:progress,error:progressError}]=await Promise.all([
+      client.from("academy_attendance").select("*").order("class_date",{ascending:false}).limit(100),
+      client.from("academy_lesson_progress").select("*").order("updated_at",{ascending:false}).limit(100)
+    ]);
+    if(attendanceError)throw attendanceError;
+    if(progressError)throw progressError;
+    box.replaceChildren();
+    const headingA=document.createElement("strong");headingA.textContent="Attendance (latest 100)";
+    box.appendChild(headingA);
+    if(!attendance.length){const p=document.createElement("p");p.textContent="No attendance records yet.";box.appendChild(p);}
+    attendance.forEach(item=>{
+      const p=document.createElement("p");p.className="note";
+      p.textContent=item.class_date+" · "+item.student_id+" · "+item.attendance_status+(item.note?" · "+item.note:"");
+      box.appendChild(p);
+    });
+    const headingP=document.createElement("strong");headingP.textContent="Lesson progress (latest 100)";headingP.style.display="block";headingP.style.marginTop="16px";
+    box.appendChild(headingP);
+    if(!progress.length){const p=document.createElement("p");p.textContent="No lesson progress records yet.";box.appendChild(p);}
+    progress.forEach(item=>{
+      const p=document.createElement("p");p.className="note";
+      p.textContent=item.student_id+" · "+item.lesson_title+" · "+item.progress_status.replaceAll("_"," ")+" ("+item.progress_percent+"%)"+(item.notes?" · "+item.notes:"");
+      box.appendChild(p);
+    });
+  }
+
   async function loadAdminDashboard() {
     const { data: apps, error } = await client.from("student_applications").select("*").order("created_at", {ascending:false});
     if (error) throw error;
@@ -605,6 +691,9 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
     if(refreshButton) refreshButton.onclick=()=>loadAdminDashboard();
     renderAdminStudents();
     await refreshAdminExams();
+    await refreshAdminAcademicRecords();
+    const attendanceDate=document.getElementById("attendanceDate");
+    if(attendanceDate && !attendanceDate.value) attendanceDate.value=new Date().toISOString().slice(0,10);
     const certBox=document.getElementById("adminCertificates"); certBox.replaceChildren();
     if (!certs.length) certBox.textContent="No certificates issued yet.";
     certs.forEach(c=>{
@@ -614,6 +703,53 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
       row.append(p,print);certBox.appendChild(row);
     });
   }
+  document.getElementById("attendanceForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    const form=event.currentTarget,button=form.querySelector('button[type="submit"]');
+    button.disabled=true;button.textContent="SAVING...";
+    try{
+      const studentId=document.getElementById("attendanceStudentId").value.trim();
+      const classDate=document.getElementById("attendanceDate").value;
+      const attendanceStatus=document.getElementById("attendanceStatus").value;
+      if(!/^[0-9a-f-]{36}$/i.test(studentId))throw new Error("Enter a valid student user ID.");
+      if(!classDate)throw new Error("Choose the class date.");
+      const {error}=await client.from("academy_attendance").upsert({
+        student_id:studentId,class_date:classDate,attendance_status:attendanceStatus,
+        note:document.getElementById("attendanceNote").value.trim(),updated_at:new Date().toISOString()
+      },{onConflict:"student_id,class_date"});
+      if(error)throw error;
+      show("attendanceMessage","Attendance saved. The student can see this record in their dashboard.");
+      document.getElementById("attendanceNote").value="";
+      await refreshAdminAcademicRecords();
+    }catch(err){show("attendanceMessage",err.message||"Could not save attendance.");}
+    finally{button.disabled=false;button.textContent="SAVE ATTENDANCE";}
+  });
+
+  document.getElementById("lessonProgressForm")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    const form=event.currentTarget,button=form.querySelector('button[type="submit"]');
+    button.disabled=true;button.textContent="SAVING...";
+    try{
+      const studentId=document.getElementById("progressStudentId").value.trim();
+      const lessonTitle=document.getElementById("progressLessonTitle").value.trim();
+      const progressStatus=document.getElementById("progressStatus").value;
+      let percent=Number(document.getElementById("progressPercent").value);
+      if(!/^[0-9a-f-]{36}$/i.test(studentId))throw new Error("Enter a valid student user ID.");
+      if(!lessonTitle)throw new Error("Enter the lesson or module name.");
+      if(!Number.isInteger(percent)||percent<0||percent>100)throw new Error("Progress must be a whole number from 0 to 100.");
+      if(progressStatus==="completed")percent=100;
+      const {error}=await client.from("academy_lesson_progress").upsert({
+        student_id:studentId,lesson_title:lessonTitle,progress_status:progressStatus,
+        progress_percent:percent,notes:document.getElementById("progressNotes").value.trim(),
+        updated_at:new Date().toISOString()
+      },{onConflict:"student_id,lesson_title"});
+      if(error)throw error;
+      show("progressMessage","Lesson progress saved. The student can see the update in their dashboard.");
+      await refreshAdminAcademicRecords();
+    }catch(err){show("progressMessage",err.message||"Could not save lesson progress.");}
+    finally{button.disabled=false;button.textContent="SAVE LESSON PROGRESS";}
+  });
+
   document.getElementById("classSettingsForm")?.addEventListener("submit",async event=>{
     event.preventDefault();
     const form=event.currentTarget,button=form.querySelector('button[type="submit"]');
@@ -742,6 +878,7 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
           const mpesaAllowed=studentCountry==="Kenya";
           document.getElementById("feesPaymentFormWrap").style.display=mpesaAllowed?"block":"none";
           const eligible=application.payment_status==="paid" && application.application_status==="approved";
+          if(eligible) await loadStudentAcademicRecords(user); else { const academicPanel=document.getElementById("studentAcademicRecords"); if(academicPanel){academicPanel.style.display="block";academicPanel.textContent="Attendance and learning progress become visible after your application is approved and payment is verified.";} }
           document.getElementById("studentNextStep").textContent=eligible
             ? "Your enrolment is approved. Your private class details are shown below."
             : application.payment_status==="paid" ? "Your payment is recorded. Await application approval."
@@ -864,6 +1001,20 @@ body.academy-review-mode h1,body.academy-review-mode h2,body.academy-review-mode
           : mpesaAllowed
             ? "Return to the Fees section to request your course payment with M-Pesa."
             : "International checkout is not active for "+(studentCountry||"your country")+" yet. Please wait for an official payment option; do not send money unofficially.";
+      const eligibleForLearning=application.application_status==="approved" && application.payment_status==="paid";
+      const academicPanel=document.getElementById("studentAcademicRecords");
+      if(eligibleForLearning) await loadStudentAcademicRecords(user);
+      else if(academicPanel){academicPanel.style.display="block";academicPanel.textContent="Attendance and learning progress become visible after your application is approved and payment is verified."}
+      if(eligibleForLearning){
+        const {data:settings}=await client.from("academy_class_settings").select("*").eq("id",true).maybeSingle();
+        if(settings){
+          const classPanel=document.getElementById("studentClassDetails");if(classPanel)classPanel.style.display="block";
+          const schedule=document.getElementById("studentClassSchedule");if(schedule)schedule.textContent=window.zbaGetLocalClassSchedule?window.zbaGetLocalClassSchedule():(settings.class_schedule||"Timetable not published.");
+          const zoom=document.getElementById("studentZoomLink"),group=document.getElementById("studentWhatsAppLink");
+          if(zoom && settings.zoom_meeting_url){zoom.href=settings.zoom_meeting_url;zoom.style.display="inline-block";}
+          if(group && settings.whatsapp_group_url){group.href=settings.whatsapp_group_url;group.style.display="inline-block";}
+        }
+      }
       updateAuthPanel(true, "Your student session has been restored.");
     } catch (err) {
       console.error("Could not restore student Fees access:", err);
