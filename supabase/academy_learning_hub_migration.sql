@@ -125,7 +125,7 @@ begin
       new.display_name := old.display_name;
     else
       new.points := 0;
-      new.display_name := coalesce(nullif(trim(old.display_name),''),'Student');
+      new.display_name := coalesce(nullif(trim(new.display_name),''),'Student');
     end if;
   end if;
   return new;
