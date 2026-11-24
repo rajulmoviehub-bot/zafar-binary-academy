@@ -81,8 +81,14 @@ module.exports = async function handler(req, res) {
     await db("/rest/v1/academy_payment_intents", {
       method: "POST",
       body: JSON.stringify({
-        id, user_id: user.id, application_id: application.id, amount_kes: amount,
-        fee_amount_kes: amount, phone, status: "initiating"
+        id,
+        user_id: user.id,
+        application_id: application.id,
+        amount_kes: amount,
+        usd_amount: Math.round(amountUsd),
+        exchange_rate: usdKesRate,
+        phone,
+        status: "initiating"
       })
     });
 
